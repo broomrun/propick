@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ProdiPicker</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { background-color: #FAF7F0; color: #000000; }
+        .navbar { background-color: #B17457; }
+        .carousel-inner img { width: 100%; height: 400px; }
+        .circle-logo { border-radius: 50%; margin: 10px; width: 80px; height: 80px; object-fit: cover; }
+        .logo-container { display: flex; flex-wrap: wrap; justify-content: center; }
+        .start-btn { background-color: #B17457; color: #FFF; border: none; padding: 10px 20px; cursor: pointer; }
+        .start-btn:hover { background-color: #8F5B40; }
+        .modal-content {
+            background-color: #D8D2C2;
+            padding: 20px;
+            border-radius: 10px;
+        }
+        .modal-header {
+            border-bottom: 1px solid #8F5B40;
+            background-color: #B17457;
+            color: white;
+        }
+        .close {
+            color: white;
+            font-size: 1.5rem;
+        }
+        .btn-custom {
+            background-color: #B17457;
+            color: #FFFFFF;
+            border: none;
+        }
+        .btn-custom:hover {
+            background-color: #8F5B40;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark">
+    <a class="navbar-brand" href="#">ProdiPicker</a>
+</nav>
+
+<!-- Carousel for welcome images -->
+<div id="carouselExample" class="carousel slide" data-ride="carousel">
+    <div class="carousel-inner">
+        <div class="carousel-item active">
+            <img src="image1.jpg" class="d-block w-100" alt="carousel image 1">
+        </div>
+        <div class="carousel-item">
+            <img src="image2.jpg" class="d-block w-100" alt="carousel image 2">
+        </div>
+    </div>
+    <a class="carousel-control-prev" href="#carouselExample" role="button" data-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+    </a>
+    <a class="carousel-control-next" href="#carouselExample" role="button" data-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+    </a>
+</div>
+
+<!-- University logos in circles -->
+<div class="logo-container">
+    <img src="logo1.png" class="circle-logo" alt="logo1">
+    <img src="logo2.png" class="circle-logo" alt="logo2">
+    <img src="logo3.png" class="circle-logo" alt="logo3">
+</div>
+
+<!-- Start button to enter user info -->
+<div class="text-center mt-5">
+    <button class="start-btn" id="startButton">Mulai</button>
+</div>
+
+<!-- Modal for User Info -->
+<div class="modal fade" id="userInfoModal" tabindex="-1" role="dialog" aria-labelledby="userInfoModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="userInfoModalLabel">Masukkan Data Diri</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="userInfoForm">
+                    <div class="form-group">
+                        <label for="userName">Nama</label>
+                        <input type="text" class="form-control" id="userName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="userAge">Umur</label>
+                        <input type="number" class="form-control" id="userAge" min="14" max="25" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="schoolType">Asal Sekolah</label>
+                        <select class="form-control" id="schoolType" required>
+                            <option value="SMA">SMA</option>
+                            <option value="SMK">SMK</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="major">Jurusan Pilihan</label>
+                        <select class="form-control" id="major" required>
+                            <option value="informatika">Informatika</option>
+                            <option value="akuntansi">Akuntansi</option>
+                            <option value="desainGrafis">Desain Grafis</option>
+                            <option value="hukum">Hukum</option>
+                            <option value="medis">Medis</option>
+                            <option value="psikologi">Psikologi</option>
+                            <option value="manajemen">Manajemen</option>
+                            <option value="pendidikan">Pendidikan</option>
+                            <option value="pertanian">Pertanian</option>
+                            <option value="fisika">Fisika</option>
+                            <option value="kimia">Kimia</option>
+                            <option value="biologi">Biologi</option>
+                            <option value="teknikSipil">Teknik Sipil</option>
+                            <option value="arsitektur">Arsitektur</option>
+                            <option value="seniRupa">Seni Rupa</option>
+                            <option value="komunikasi">Komunikasi</option>
+                            <option value="informatikaBisnis">Informatika Bisnis</option>
+                            <option value="elektronika">Elektronika</option>
+                            <option value="keperawatan">Keperawatan</option>
+                            <option value="teknikIndustri">Teknik Industri</option>
+                            <option value="ilmuPolitik">Ilmu Politik</option>
+                            <option value="ilmuKomputer">Ilmu Komputer</option>
+                            <option value="akutansiPerpajakan">Akuntansi Perpajakan</option>
+                            <option value="pariwisata">Pariwisata</option>
+                            <option value="statistika">Statistika</option>
+                            <option value="teknikLingkungan">Teknik Lingkungan</option>
+                            <option value="agroteknologi">Agroteknologi</option>
+                            <option value="teknikMekanika">Teknik Mekanika</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-custom btn-block">Mulai Quiz</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Script to handle Modal and form submission -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+<script>
+    $(document).ready(function() {
+        // Show the modal when the 'Mulai' button is clicked
+        $('#startButton').on('click', function() {
+            $('#userInfoModal').modal('show');
+        });
+
+        // Form submission to start quiz
+        $('#userInfoForm').on('submit', function(e) {
+            e.preventDefault();
+            const major = $('#major').val();
+            window.location.href = `quiz.html?major=${major}`;
+        });
+    });
+</script>
+
+</body>
+</html>
