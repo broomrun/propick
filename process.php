@@ -1,13 +1,13 @@
 <?php
 include 'config.php';
 
-// Get POST data and validate inputs
+// Fetch major details and questions as before
 $nama = htmlspecialchars(trim($_POST['nama']));
 $umur = (int) $_POST['umur'];
 $asal_sekolah = htmlspecialchars(trim($_POST['asal_sekolah']));
 $jurusan = htmlspecialchars(trim($_POST['jurusan']));
 
-// Validate essential inputs
+// Validate inputs
 if (empty($nama) || empty($umur) || empty($asal_sekolah) || empty($jurusan)) {
     die("Error: All fields are required.");
 }
@@ -18,43 +18,22 @@ if ($umur < 14 || $umur > 25) {
 
 // Save user data to the database
 $stmt = $conn->prepare("INSERT INTO users (nama, umur, asal_sekolah, jurusan) VALUES (?, ?, ?, ?)");
-if (!$stmt) {
-    die("Error preparing statement: " . $conn->error);
-}
 $stmt->bind_param("siss", $nama, $umur, $asal_sekolah, $jurusan);
-if (!$stmt->execute()) {
-    die("Error executing query: " . $stmt->error);
-}
-
-// Retrieve the newly inserted user's ID
+$stmt->execute();
 $user_id = $conn->insert_id;
 
-// Get criteria for the selected major
+// Fetch major and questions as before
 $query = "SELECT * FROM majors WHERE nama_jurusan = ?";
 $stmt = $conn->prepare($query);
-if (!$stmt) {
-    die("Error preparing statement: " . $conn->error);
-}
 $stmt->bind_param("s", $jurusan);
-if (!$stmt->execute()) {
-    die("Error executing query: " . $stmt->error);
-}
+$stmt->execute();
 $result = $stmt->get_result();
 $major = $result->fetch_assoc();
-if (!$major) {
-    die("Error: Major not found.");
-}
 
-// Fetch related questions for the major
 $query = "SELECT * FROM questions WHERE major_id = ?";
 $stmt = $conn->prepare($query);
-if (!$stmt) {
-    die("Error preparing statement: " . $conn->error);
-}
 $stmt->bind_param("i", $major['id']);
-if (!$stmt->execute()) {
-    die("Error executing query: " . $stmt->error);
-}
+$stmt->execute();
 $questions = $stmt->get_result();
 $questions_array = $questions->fetch_all(MYSQLI_ASSOC);
 ?>
@@ -71,18 +50,15 @@ $questions_array = $questions->fetch_all(MYSQLI_ASSOC);
             background-color: #FAF7F0;
             color: #000000;
         }
-
         .navbar {
             background-color: #B17457;
         }
-
         .quiz-container {
             display: flex;
             align-items: center;
             justify-content: center;
             height: 100vh;
         }
-
         .quiz-box {
             background-color: #D8D2C2;
             padding: 2rem;
@@ -91,7 +67,6 @@ $questions_array = $questions->fetch_all(MYSQLI_ASSOC);
             width: 100%;
             max-width: 500px;
         }
-
         .question-box {
             background-color: white;
             padding: 1rem;
@@ -99,19 +74,20 @@ $questions_array = $questions->fetch_all(MYSQLI_ASSOC);
             margin-bottom: 1.5rem;
             box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
         }
-
         .btn-custom {
             background-color: #B17457;
             color: #FFFFFF;
             border: none;
         }
-
         .btn-custom:hover {
             background-color: #8F5B40;
         }
-
         .btn-block {
             margin-bottom: 10px;
+        }
+        .question-box button:disabled {
+            background-color: #D8D2C2;
+            cursor: not-allowed;
         }
     </style>
 </head>
@@ -138,9 +114,11 @@ $questions_array = $questions->fetch_all(MYSQLI_ASSOC);
             <?php foreach ($questions_array as $index => $question): ?>
                 <div class="form-group question-box" id="question-<?= $index ?>" style="display: <?= $index == 0 ? 'block' : 'none' ?>;">
                     <h4><?= htmlspecialchars($question['pertanyaan']) ?></h4>
-                    <button type="button" class="btn btn-custom btn-block" onclick="answerQuestion('yes', <?= $index ?>)">Ya</button>
-                    <button type="button" class="btn btn-custom btn-block" onclick="answerQuestion('no', <?= $index ?>)">Tidak</button>
+                    <button type="button" class="btn btn-custom btn-block" onclick="answerQuestion('ya', <?= $index ?>)">Ya</button>
+                    <button type="button" class="btn btn-custom btn-block" onclick="answerQuestion('tidak', <?= $index ?>)">Tidak</button>
                 </div>
+                <!-- Hidden answer field for each question -->
+                <input type="hidden" name="answer_<?= $question['id'] ?>" id="answer_<?= $index ?>">
             <?php endforeach; ?>
 
             <div class="d-flex justify-content-between">
@@ -148,7 +126,7 @@ $questions_array = $questions->fetch_all(MYSQLI_ASSOC);
                 <button type="button" id="nextButton" class="btn btn-primary" onclick="nextQuestion()">Next</button>
             </div>
 
-            <button type="submit" class="btn btn-primary btn-block" id="submitBtn" style="display: none;">Kirim Jawaban</button>
+            <button type="submit" class="btn btn-primary btn-block" id="submitBtn" style="display: none;" disabled>Kirim Jawaban</button>
         </form>
     </div>
 </div>
@@ -158,9 +136,11 @@ $questions_array = $questions->fetch_all(MYSQLI_ASSOC);
     const totalQuestions = <?= count($questions_array) ?>;
 
     function answerQuestion(answer, index) {
-        // Store answer or process as needed
-        // For now just proceed to the next question
-        console.log('Answer:', answer, 'Question:', index);
+        // Save the answer for this question in the hidden input field
+        document.getElementById(`answer_${index}`).value = answer;
+
+        // Show next question
+        nextQuestion();
     }
 
     function nextQuestion() {
@@ -174,6 +154,9 @@ $questions_array = $questions->fetch_all(MYSQLI_ASSOC);
 
             // Show/Hide buttons
             toggleButtons();
+        } else {
+            // Enable submit button only when all questions are answered
+            document.getElementById('submitBtn').disabled = false;
         }
     }
 
