@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ProdiPicker - Hasil</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { background-color: #FAF7F0; color: #000000; }
+        .navbar { background-color: #B17457; }
+        .result-container {
+            text-align: center;
+            margin: 3rem auto;
+            padding: 2rem;
+            background-color: #D8D2C2;
+            border-radius: 10px;
+            max-width: 600px;
+        }
+        .btn-custom {
+            background-color: #B17457; color: #FFFFFF; border: none;
+        }
+        .btn-custom:hover { background-color: #8F5B40; }
+        .bold { font-weight: bold; }
+        .not-suitable { color: red; }
+        .divider { border-top: 2px solid #B17457; margin: 20px 0; }
+        .info-text { font-size: 1.1rem; margin-top: 1rem; }
+        .text-large { font-size: 1.3rem; }
+        .action-buttons {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        .action-buttons button {
+            margin: 0 10px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <a class="navbar-brand" href="#">ProdiPicker</a>
+    </nav>
+
+    <!-- Result Section -->
+    <div class="container result-container">
+        <h2>Hasil Tes</h2>
+        <div class="divider"></div>
+        <p id="resultMessage" class="info-text"></p>
+        <h3 id="resultJurusan" class="font-weight-bold text-large"></h3>
+        <div class="divider"></div>
+        
+        <!-- User Information -->
+        <p class="info-text"><strong>Nama:</strong> <span id="userName"></span></p>
+        <p class="info-text"><strong>Umur:</strong> <span id="userAge"></span></p>
+        <p class="info-text"><strong>Asal Sekolah:</strong> <span id="userSchool"></span></p>
+        <div class="divider"></div>
+
+        <!-- Feeling Based on Results -->
+        <p id="userFeeling" class="info-text"></p>
+        <div class="divider"></div>
+
+        <!-- Final Decision -->
+        <p id="suitableMessage" class="info-text"></p>
+        
+        <!-- Action Buttons -->
+        <div class="action-buttons">
+            <button class="btn btn-custom" id="endButton">Akhiri</button>
+            <button class="btn btn-custom" id="tryOtherMajorButton">Lihat Prodi Lain</button>
+        </div>
+    </div>
+
+    <script>
+        // Fetch URL parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        const major = urlParams.get('major'); // Get selected major
+    
+        // Predefined majors
+        const majors = {
+            informatika: "Informatika",
+            akuntansi: "Akuntansi",
+            desainGrafis: "Desain Grafis",
+            hukum: "Hukum",
+            medis: "Medis",
+            psikologi: "Psikologi",
+            manajemen: "Manajemen",
+            pendidikan: "Pendidikan",
+            pertanian: "Pertanian",
+            fisika: "Fisika",
+            kimia: "Kimia",
+            biologi: "Biologi",
+            teknikSipil: "Teknik Sipil",
+            arsitektur: "Arsitektur",
+            seniRupa: "Seni Rupa",
+            komunikasi: "Komunikasi",
+            informatikaBisnis: "Informatika Bisnis",
+            elektronika: "Elektronika",
+            keperawatan: "Keperawatan",
+            teknikIndustri: "Teknik Industri",
+            ilmuPolitik: "Ilmu Politik",
+            ilmuKomputer: "Ilmu Komputer",
+            akutansiPerpajakan: "Akuntansi Perpajakan",
+            pariwisata: "Pariwisata",
+            statistika: "Statistika",
+            teknikLingkungan: "Teknik Lingkungan",
+            agroteknologi: "Agroteknologi",
+            teknikMekanika: "Teknik Mekanika"
+        };
+    
+        // Retrieve the answers from sessionStorage (mocked for now)
+        const answers = JSON.parse(sessionStorage.getItem('quizAnswers')) || ['yes', 'no', 'yes', 'yes', 'no', 'yes', 'no'];  // Example answers
+    
+        // Calculate the number of 'yes' answers
+        const yesAnswers = answers.filter(answer => answer === 'yes').length;
+    
+        // Determine suitability based on the number of 'yes' answers (greater than 4 means suitable)
+        const isSuitable = yesAnswers > 4;
+    
+        // Set result text based on the suitability
+        let resultMessage = '';
+        let resultText = majors[major] || 'Jurusan Tidak Diketahui';
+        
+        if (isSuitable) {
+            resultMessage = `Selamat! Berdasarkan jawaban kamu, jurusan ini <span class="bold">COCOK</span> untuk kamu.`;
+        } else {
+            resultMessage = `Sayangnya, jawaban kamu menunjukkan bahwa jurusan ini <span class="bold not-suitable">TIDAK COCOK</span> untuk kamu.`;
+            resultText = 'Silakan coba jurusan lain yang lebih sesuai!';
+        }
+    
+        // Fetch user info from sessionStorage
+        const userName = sessionStorage.getItem('userName');
+        const userAge = sessionStorage.getItem('userAge');
+        const userSchool = sessionStorage.getItem('userSchool');
+    
+        // Insert results into HTML
+        document.getElementById('resultMessage').innerHTML = resultMessage;
+        document.getElementById('resultJurusan').innerText = resultText;
+        document.getElementById('userName').innerText = userName;
+        document.getElementById('userAge').innerText = userAge;
+        document.getElementById('userSchool').innerText = userSchool;
+    
+        // Feeling based on answers
+        let userFeeling = '';
+        if (isSuitable) {
+            userFeeling = 'Kamu merasa sangat cocok dengan jurusan yang kamu pilih!';
+        } else {
+            userFeeling = 'Mungkin jurusan ini bukan yang terbaik untuk kamu, coba pertimbangkan pilihan lain.';
+        }
+    
+        document.getElementById('userFeeling').innerText = userFeeling;
+    
+        // Final Decision Message
+        let suitableMessage = '';
+        if (isSuitable) {
+            suitableMessage = 'Kamu cocok dengan jurusan ini, semangat untuk langkah selanjutnya!';
+        } else {
+            suitableMessage = 'Coba cari jurusan yang lebih sesuai dengan minat dan keahlian kamu.';
+        }
+        document.getElementById('suitableMessage').innerText = suitableMessage;
+    
+        // Handle button actions
+        document.getElementById('endButton').addEventListener('click', function() {
+            if (confirm('Apakah kamu yakin ingin mengakhiri?')) {
+                window.location.href = 'index.html';
+            }
+        });
+    
+        document.getElementById('tryOtherMajorButton').addEventListener('click', function() {
+            if (!confirm('Apakah kamu ingin mencoba jurusan lain?')) {
+                // Stay on the result page
+                return;
+            }
+            window.location.href = 'index.html';  // Redirect to landing page
+        });
+    </script>
+    
+    
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

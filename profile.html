@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ProdiPicker - Profil</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { background-color: #FAF7F0; color: #000000; }
+        .navbar { background-color: #B17457; }
+        .profile-container {
+            text-align: center;
+            margin: 3rem auto;
+            padding: 2rem;
+            background-color: #D8D2C2;
+            border-radius: 10px;
+            max-width: 800px;
+        }
+        .divider { border-top: 2px solid #B17457; margin: 20px 0; }
+        .info-text { font-size: 1.1rem; margin-top: 1rem; }
+        .bold { font-weight: bold; }
+        .history-list {
+            text-align: left;
+            margin: 20px auto;
+            padding-left: 0;
+        }
+        .history-list li { 
+            list-style-type: none;
+            padding: 5px 0;
+        }
+        .history-list .suitable { color: green; }
+        .history-list .not-suitable { color: red; }
+        .stats-section {
+            margin-top: 30px;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <a class="navbar-brand" href="#">ProdiPicker</a>
+    </nav>
+
+    <!-- Profile Section -->
+    <div class="container profile-container">
+        <h2>Profil Pengguna</h2>
+        
+        <!-- User Information -->
+        <p class="info-text"><strong>Nama:</strong> <span id="userName"></span></p>
+        <p class="info-text"><strong>Umur:</strong> <span id="userAge"></span></p>
+        <p class="info-text"><strong>Asal Sekolah:</strong> <span id="userSchool"></span></p>
+        <p class="info-text"><strong>Jenjang Sekolah:</strong> <span id="userEducationLevel"></span></p>
+        
+        <div class="divider"></div>
+
+        <!-- History Section -->
+        <h3>Riwayat Tes</h3>
+        <ul id="historyList" class="history-list">
+            <!-- Dynamic list of test history will go here -->
+        </ul>
+
+        <div class="divider"></div>
+
+        <!-- Statistics Section -->
+        <div class="stats-section">
+            <h4>Statistik Kecocokan</h4>
+            <p id="suitableCount">Cocok: <span id="countSuitable">0</span></p>
+            <p id="notSuitableCount">Tidak Cocok: <span id="countNotSuitable">0</span></p>
+        </div>
+
+        <div class="divider"></div>
+
+        <!-- Detail Kecocokan Prodi -->
+        <h4>Kecocokan Prodi yang Sudah Diuji</h4>
+        <ul id="suitabilityList" class="history-list">
+            <!-- Dynamic list of suitability details will go here -->
+        </ul>
+    </div>
+
+    <script>
+        // Fetch user data from sessionStorage (Assuming it's set during login)
+        const userName = sessionStorage.getItem('userName');
+        const userAge = sessionStorage.getItem('userAge');
+        const userSchool = sessionStorage.getItem('userSchool');
+        const userEducationLevel = sessionStorage.getItem('userEducationLevel');
+
+        // Insert user information into the profile
+        document.getElementById('userName').innerText = userName;
+        document.getElementById('userAge').innerText = userAge;
+        document.getElementById('userSchool').innerText = userSchool;
+        document.getElementById('userEducationLevel').innerText = userEducationLevel;
+
+        // Assuming test history is stored in sessionStorage
+        const testHistory = JSON.parse(sessionStorage.getItem('testHistory')) || [];
+
+        // Populate test history
+        const historyList = document.getElementById('historyList');
+        testHistory.forEach(test => {
+            const listItem = document.createElement('li');
+            listItem.innerHTML = `${test.major} - <span class="${test.suitable ? 'suitable' : 'not-suitable'}">${test.suitable ? 'Cocok' : 'Tidak Cocok'}</span>`;
+            historyList.appendChild(listItem);
+        });
+
+        // Calculate and display statistics
+        const suitableCount = testHistory.filter(test => test.suitable).length;
+        const notSuitableCount = testHistory.filter(test => !test.suitable).length;
+
+        document.getElementById('countSuitable').innerText = suitableCount;
+        document.getElementById('countNotSuitable').innerText = notSuitableCount;
+
+        // Detail Kecocokan Prodi
+        const suitabilityList = document.getElementById('suitabilityList');
+        testHistory.forEach(test => {
+            const listItem = document.createElement('li');
+            let suitabilityText = '';
+
+            // Based on the suitability, we add more detailed text
+            if (test.suitable) {
+                suitabilityText = `Prodi ${test.major} cocok dengan kamu karena kamu memiliki minat dan kemampuan yang sesuai.`;
+            } else {
+                suitabilityText = `Prodi ${test.major} kurang cocok dengan kamu, mungkin kamu bisa mempertimbangkan bidang lain.`;
+            }
+
+            listItem.innerHTML = `${test.major}: ${suitabilityText}`;
+            suitabilityList.appendChild(listItem);
+        });
+    </script>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
