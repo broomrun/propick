@@ -1,9 +1,15 @@
 <?php
-include 'config.php';
-
-// Fetch data from database
-$query = "SELECT * FROM majors";
-$majors = $conn->query($query);
+// Bagian PHP
+session_start();
+$userName = "";
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (isset($_POST['name']) && isset($_POST['age'])) {
+        $_SESSION['name'] = htmlspecialchars($_POST['name']);
+        $_SESSION['age'] = intval($_POST['age']);
+        $userName = $_SESSION['name'];
+        echo "<script>alert('Selamat datang, $userName!');</script>";
+    }
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -11,7 +17,6 @@ $majors = $conn->query($query);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ProdiPicker</title>
-    <!-- Bootstrap CSS -->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
@@ -24,6 +29,25 @@ $majors = $conn->query($query);
         .carousel-inner img {
             width: 100%;
             height: 400px;
+            object-fit: cover;
+        }
+
+        .carousel-caption {
+            position: absolute;
+            bottom: 20%;
+            left: 50%;
+            transform: translateX(-50%);
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            text-align: center;
+            max-width: 90%;
+        }
+        .carousel-caption h5 {
+            font-size: 2rem;
+            font-weight: bold;
+        }
+        .carousel-caption p {
+            font-size: 1.2rem;
         }
         .circle-logo {
             border-radius: 50%;
@@ -32,19 +56,16 @@ $majors = $conn->query($query);
             height: 80px;
             object-fit: cover;
         }
-        .logo-container {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-        }
-        .start-btn {
+        .start-btn, .login-btn, .signup-btn {
             background-color: #B17457;
-            color: #FFF;
+            color: white;
             border: none;
             padding: 10px 20px;
+            margin: 10px;
+            border-radius: 5px;
             cursor: pointer;
         }
-        .start-btn:hover {
+        .start-btn:hover, .login-btn:hover, .signup-btn:hover {
             background-color: #8F5B40;
         }
         .modal-content {
@@ -73,17 +94,27 @@ $majors = $conn->query($query);
 </head>
 <body>
 
+<!-- Navbar -->
 <nav class="navbar navbar-expand-lg navbar-dark">
     <a class="navbar-brand" href="#">ProdiPicker</a>
 </nav>
 
+<!-- Carousel -->
 <div id="carouselExample" class="carousel slide" data-ride="carousel">
     <div class="carousel-inner">
         <div class="carousel-item active">
-            <img src="image1.jpg" class="d-block w-100" alt="carousel image 1">
+            <img src="assets/image1.jpg" alt="Slide 1">
+            <div class="carousel-caption d-none d-md-block">
+                <h5>Selamat Datang di ProdiPicker</h5>
+                <p>Temukan program studi yang cocok untukmu!</p>
+            </div>
         </div>
         <div class="carousel-item">
-            <img src="image2.jpg" class="d-block w-100" alt="carousel image 2">
+            <img src="assets/image2.jpg" alt="Slide 2">
+            <div class="carousel-caption d-none d-md-block">
+                <h5>Pilih Jalur Karirmu</h5>
+                <p>Eksplorasi program terbaik untuk masa depanmu!</p>
+            </div>
         </div>
     </div>
     <a class="carousel-control-prev" href="#carouselExample" role="button" data-slide="prev">
@@ -94,79 +125,92 @@ $majors = $conn->query($query);
     </a>
 </div>
 
-<div class="logo-container">
-    <img src="logo1.png" class="circle-logo" alt="logo1">
-    <img src="logo2.png" class="circle-logo" alt="logo2">
-    <img src="logo3.png" class="circle-logo" alt="logo3">
+<!-- University logos -->
+<div class="d-flex justify-content-center flex-wrap mt-4">
+    <img src="logo1.png" class="circle-logo" alt="Logo 1">
+    <img src="logo2.png" class="circle-logo" alt="Logo 2">
+    <img src="logo3.png" class="circle-logo" alt="Logo 3">
 </div>
 
-<div class="text-center mt-5">
-    <button class="start-btn" id="startButton">Mulai</button>
+<!-- Buttons -->
+<div class="d-flex justify-content-center mt-4">
+    <button class="login-btn" data-toggle="modal" data-target="#loginModal">Daftar / Login</button>
+    <button class="start-btn" id="testButton" disabled>Mulai Tes</button>
 </div>
 
-<div class="modal fade" id="userInfoModal" tabindex="-1" role="dialog" aria-labelledby="userInfoModalLabel" aria-hidden="true">
+<!-- Modal: Login -->
+<div class="modal fade" id="loginModal" tabindex="-1" role="dialog" aria-labelledby="loginModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="userInfoModalLabel">Masukkan Data Diri</h5>
+                <h5 class="modal-title" id="loginModalLabel">Login</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
-                <form id="userInfoForm" action="process.php" method="POST">
-                    <!-- Input Nama -->
+                <form method="POST" action="">
                     <div class="form-group">
-                        <label for="nama">Nama</label>
-                        <input type="text" class="form-control" name="nama" id="nama" required>
+                        <label for="name">Nama</label>
+                        <input type="text" class="form-control" id="name" name="name" required>
                     </div>
-                    
-                    <!-- Input Umur -->
                     <div class="form-group">
-                        <label for="umur">Umur</label>
-                        <input type="number" class="form-control" name="umur" id="umur" min="14" max="25" required>
+                        <label for="age">Umur</label>
+                        <input type="number" class="form-control" id="age" name="age" min="14" max="25" required>
                     </div>
-                    
-                    <!-- Pilihan Asal Sekolah -->
                     <div class="form-group">
-                        <label for="asal_sekolah">Asal Sekolah</label>
-                        <select class="form-control" name="asal_sekolah" id="asal_sekolah" required>
+                        <label for="loginSchoolType">Asal Sekolah</label>
+                        <select class="form-control" id="loginSchoolType" required>
                             <option value="SMA">SMA</option>
                             <option value="SMK">SMK</option>
                         </select>
                     </div>
-                    
-                    <!-- Pilihan Jurusan -->
-                    <div class="form-group">
-                        <label for="jurusan">Jurusan Pilihan</label>
-                        <select class="form-control" name="jurusan" id="jurusan" required>
-                            <?php while ($major = $majors->fetch_assoc()): ?>
-                                <option value="<?= htmlspecialchars($major['nama_jurusan']) ?>">
-                                    <?= htmlspecialchars($major['nama_jurusan']) ?>
-                                </option>
-                            <?php endwhile; ?>
-                        </select>
-                    </div>
-                    
-                    <!-- Tombol Submit -->
-                    <button type="submit" class="btn btn-custom btn-block">Mulai Quiz</button>
+                    <button type="submit" class="btn btn-custom btn-block">Login</button>
                 </form>
             </div>
         </div>
     </div>
 </div>
 
-<!-- JS Scripts -->
+<!-- Modal: Start Test -->
+<div class="modal fade" id="testModal" tabindex="-1" role="dialog" aria-labelledby="testModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="testModalLabel">Hi, <?php echo isset($_SESSION['name']) ? $_SESSION['name'] : ''; ?>! Mau tes prodi apa?</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <select class="form-control" id="quizMajor">
+                    <option value="informatika">Informatika</option>
+                    <option value="akuntansi">Akuntansi</option>
+                    <option value="hukum">Hukum</option>
+                    <option value="medis">Medis</option>
+                    <option value="psikologi">Psikologi</option>
+                </select>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-custom" id="startQuiz">Mulai</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Scripts -->
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 <script>
-    $(document).ready(function() {
-        $('#startButton').on('click', function() {
-            $('#userInfoModal').modal('show');
-        });
+    document.getElementById('testButton').disabled = <?php echo isset($_SESSION['name']) ? 'false' : 'true'; ?>;
+    document.getElementById('startQuiz').addEventListener('click', function() {
+        const selectedMajor = document.getElementById('quizMajor').value;
+        window.location.href = `quiz.php?major=${selectedMajor}`;
     });
 </script>
 
 </body>
 </html>
+
+

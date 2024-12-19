@@ -107,44 +107,167 @@ $conn->close();
         .navbar {
             background-color: #B17457;
         }
+        .carousel-inner img {
+            width: 100%;
+            height: 400px;
+            object-fit: cover;
+        }
+
+        .carousel-caption {
+            position: absolute;
+            bottom: 20%;
+            left: 50%;
+            transform: translateX(-50%);
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            text-align: center;
+            max-width: 90%;
+        }
+        .carousel-caption h5 {
+            font-size: 2rem;
+            font-weight: bold;
+        }
+        .carousel-caption p {
+            font-size: 1.2rem;
+        }
         .circle-logo {
             border-radius: 50%;
+            margin: 10px;
             width: 80px;
             height: 80px;
             object-fit: cover;
         }
-        .start-btn {
+        .start-btn, .btn-custom {
             background-color: #B17457;
             color: white;
             border: none;
             padding: 10px 20px;
+            margin: 10px;
+            border-radius: 5px;
             cursor: pointer;
+            width: auto;
+            font-size: 1rem; /* Menjaga ukuran font seragam */
         }
-        .start-btn:disabled {
-            background-color: #CCC;
-            cursor: not-allowed;
-        }
-        .btn-custom {
-            background-color: #B17457;
-            color: #FFFFFF;
-        }
-        .btn-custom:hover {
+        .start-btn:hover, .btn-custom:hover {
             background-color: #8F5B40;
         }
+        /* Styling Modal yang Dirapikan */
+        .modal-content {
+        background-color: #FAEBD7;
+        border-radius: 15px;
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        padding: 20px;
+    }
+
+    .modal-header {
+        background-color: #8B4513;
+        color: #FFF;
+        font-size: 18px;
+        font-weight: bold;
+        border-bottom: 2px solid #DEB887;
+        border-radius: 15px 15px 0 0;
+        padding: 15px;
+    }
+
+    .modal-body {
+        color: #5C4033;
+        font-size: 16px;
+        padding: 15px;
+    }
+
+    .form-control {
+        margin-bottom: 15px;
+        border: 1px solid #8B4513;
+        border-radius: 10px;
+        padding: 10px;
+        font-size: 14px;
+    }
+
+    .modal-footer {
+        text-align: right;
+        border-top: 1px solid #DEB887;
+        padding: 10px;
+    }
+
+    .close {
+        font-size: 1.5rem;
+        color: #FFF;
+        opacity: 0.8;
+        cursor: pointer;
+    }
+
+    .close:hover {
+        opacity: 1;
+    }
+
+    .start-btn {
+        background-color: #8B4513;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 10px;
+        cursor: pointer;
+        font-size: 1rem;
+        margin-top: 10px;
+    }
+
+    .start-btn:hover {
+        background-color: #5C4033;
+    }
+    
     </style>
 </head>
 <body>
 <nav class="navbar navbar-expand-lg navbar-dark">
     <a class="navbar-brand" href="#">ProdiPicker</a>
-    <div class="ml-auto">
-        <?php if ($isLoggedIn): ?>
-            <span class="navbar-text">Welcome, <?= htmlspecialchars($userData['nama']) ?>!</span>
-            <a href="logout.php" class="btn btn-custom ml-2">Logout</a>
-        <?php else: ?>
-            <button id="openAuthModal" class="btn btn-custom">Login / Sign Up</button>
-        <?php endif; ?>
-    </div>
 </nav>
+
+<!-- Carousel -->
+<div id="carouselExample" class="carousel slide" data-ride="carousel">
+    <div class="carousel-inner">
+        <div class="carousel-item active">
+            <img src="assets/image1.jpg" alt="Slide 1">
+            <div class="carousel-caption d-none d-md-block">
+                <h5>Selamat Datang di ProdiPicker</h5>
+                <p>Temukan program studi yang cocok untukmu!</p>
+            </div>
+        </div>
+        <div class="carousel-item">
+            <img src="assets/image2.jpg" alt="Slide 2">
+            <div class="carousel-caption d-none d-md-block">
+                <h5>Pilih Jalur Karirmu</h5>
+                <p>Eksplorasi program terbaik untuk masa depanmu!</p>
+            </div>
+        </div>
+    </div>
+    <a class="carousel-control-prev" href="#carouselExample" role="button" data-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+    </a>
+    <a class="carousel-control-next" href="#carouselExample" role="button" data-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+    </a>
+</div>
+
+<!-- University logos -->
+<div class="d-flex justify-content-center flex-wrap mt-4">
+    <img src="logo1.png" class="circle-logo" alt="Logo 1">
+    <img src="logo2.png" class="circle-logo" alt="Logo 2">
+    <img src="logo3.png" class="circle-logo" alt="Logo 3">
+</div>
+
+<!-- Button Mulai and Login/Sign Up Button (next to each other) -->
+<div class="text-center mt-5">
+    <div class="d-flex justify-content-center">
+        <button class="start-btn" id="startButton" <?= $isLoggedIn ? '' : 'disabled' ?>>Mulai</button>
+        <div class="auth-btns">
+            <?php if ($isLoggedIn): ?>
+                <a href="logout.php" class="btn btn-custom ml-2">Logout</a>
+            <?php else: ?>
+                <button id="openAuthModal" class="btn btn-custom ml-2">Login / Sign Up</button>
+            <?php endif; ?>
+        </div>
+    </div>
+</div>
 
 <!-- Login Modal -->
 <div id="authModal" class="modal">
@@ -187,51 +310,6 @@ $conn->close();
         </div>
     </div>
 </div>
-
-<!-- Mulai Modal -->
-<div class="modal fade" id="userInfoModal" tabindex="-1" role="dialog">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Masukkan Data Diri</h5>
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
-            </div>
-            <div class="modal-body">
-                <form id="userInfoForm" action="process.php" method="POST">
-                    <div class="form-group">
-                        <label for="nama">Nama</label>
-                        <input type="text" class="form-control" name="nama" id="nama" value="<?= $userData['nama'] ?? '' ?>" readonly>
-                    </div>
-                    <div class="form-group">
-                        <label for="umur">Umur</label>
-                        <input type="text" name="umur" value="<?= isset($_SESSION['umur']) ? $_SESSION['umur'] : '' ?>" readonly>
-                    </div>
-                    <div class="form-group">
-                        <label for="asal_sekolah">Asal Sekolah</label>
-                        <input type="text" name="asal_sekolah" value="<?= isset($_SESSION['asal_sekolah']) ? $_SESSION['asal_sekolah'] : '' ?>" readonly>
-                    </div>
-                    <div class="form-group">
-                        <label for="jurusan">Jurusan Pilihan</label>
-                        <select class="form-control" name="jurusan" id="jurusan" required>
-                            <?php while ($major = $majors->fetch_assoc()): ?>
-                                <option value="<?= htmlspecialchars($major['nama_jurusan']) ?>">
-                                    <?= htmlspecialchars($major['nama_jurusan']) ?>
-                                </option>
-                            <?php endwhile; ?>
-                        </select>
-                    </div>
-                    <button type="submit" class="btn btn-custom btn-block">Mulai Quiz</button>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Button Mulai (disabled until logged in) -->
-<div class="text-center mt-5">
-    <button class="start-btn" id="startButton" <?= $isLoggedIn ? '' : 'disabled' ?>>Mulai</button>
-</div>
-
 <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 <script>
