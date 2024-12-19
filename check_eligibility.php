@@ -10,6 +10,16 @@ if (empty($jurusan) || empty($user_id)) {
     die("Error: Input tidak valid.");
 }
 
+// Fetch user data from the database
+$query = "SELECT * FROM users WHERE id = $user_id";
+$result = $conn->query($query);
+
+if ($result->num_rows > 0) {
+    $user_data = $result->fetch_assoc();
+} else {
+    die("Error: User data not found.");
+}
+
 // Get the user's answers from the form
 $total_questions = 7;  // Asumsi jumlah pertanyaan untuk setiap jurusan adalah 7
 $correct_answers = 0;  // Untuk menghitung jawaban "Ya"
@@ -23,23 +33,35 @@ foreach ($_POST as $key => $value) {
     }
 }
 
-if ($total_questions === 0 || $correct_answers === 0) {
-    die("Error: Tidak ada pertanyaan yang dijawab.");
+if ($correct_answers === 0) {
+    // If no answers are selected, show a message
+    die("Error: Tidak ada jawaban yang dipilih.");
 }
 
-// Debugging Output untuk mengecek hasil
-echo "Jawaban Ya: $correct_answers<br>";
+// Tentukan ambang batas (threshold) sebagai setengah dari jumlah pertanyaan
 $threshold = ceil($total_questions / 2);  // Ambang batas setengah jumlah pertanyaan
-echo "Ambang Batas: $threshold<br>";
 
 // Tentukan apakah jurusan cocok atau tidak
 $is_suitable = $correct_answers >= $threshold;
-echo "Jurusan cocok: " . ($is_suitable ? "Ya" : "Tidak") . "<br>";
 
 // Prepare the result message
-$resultMessage = $is_suitable
-    ? "Selamat! Berdasarkan jawaban kamu, jurusan ini <span class='bold'>COCOK</span> untuk kamu."
-    : "Sayangnya, jawaban kamu menunjukkan bahwa jurusan ini <span class='bold not-suitable'>TIDAK COCOK</span> untuk kamu.";
+if ($is_suitable) {
+    $resultMessage = "Selamat! Berdasarkan jawaban kamu, jurusan ini <span class='suitable'>COCOK</span> untuk kamu.<br>
+                      Kamu sangat cocok dengan jurusan yang kamu pilih!<br><br>
+                      <strong>Nama:</strong> " . htmlspecialchars($user_data['nama']) . "<br>
+                      <strong>Umur:</strong> " . htmlspecialchars($user_data['umur']) . "<br>
+                      <strong>Asal Sekolah:</strong> " . htmlspecialchars($user_data['asal_sekolah']) . "<br><br>
+                      Semangat untuk langkah selanjutnya!<br>
+                      Apakah kamu ingin mencoba jurusan lain?";
+} else {
+    $resultMessage = "Sayangnya, jawaban kamu menunjukkan bahwa jurusan ini <span class='not-suitable'>TIDAK COCOK</span> untuk kamu.<br>
+                      Silakan coba jurusan lain yang lebih sesuai!<br><br>
+                      <strong>Nama:</strong> " . htmlspecialchars($user_data['nama']) . "<br>
+                      <strong>Umur:</strong> " . htmlspecialchars($user_data['umur']) . "<br>
+                      <strong>Asal Sekolah:</strong> " . htmlspecialchars($user_data['asal_sekolah']) . "<br><br>
+                      Mungkin jurusan ini bukan yang terbaik untuk kamu, coba pertimbangkan pilihan lain.<br>
+                      Coba cari jurusan yang lebih sesuai dengan minat dan keahlian kamu.";
+}
 ?>
 
 <!DOCTYPE html>
@@ -71,6 +93,7 @@ $resultMessage = $is_suitable
         .btn-custom:hover { background-color: #8F5B40; }
         .bold { font-weight: bold; }
         .not-suitable { color: red; }
+        .suitable { color: green; font-weight: bold; }
     </style>
 </head>
 <body>
@@ -87,10 +110,9 @@ $resultMessage = $is_suitable
         <a href="index.php" class="btn btn-custom mt-4">Kembali ke Beranda</a>
         <button class="btn btn-custom mt-4 ml-3" data-toggle="modal" data-target="#jurusanModal">Lihat Semua Jurusan</button>
     </div>
-</body>
-</html>
-   <!-- Modal -->
-   <div class="modal fade" id="jurusanModal" tabindex="-1" role="dialog" aria-labelledby="jurusanModalLabel" aria-hidden="true">
+
+    <!-- Modal -->
+    <div class="modal fade" id="jurusanModal" tabindex="-1" role="dialog" aria-labelledby="jurusanModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -133,4 +155,3 @@ $resultMessage = $is_suitable
     </div>
 </body>
 </html>
-
