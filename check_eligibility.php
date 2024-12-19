@@ -1,13 +1,18 @@
 <?php
 include 'config.php';
+session_start();
+
+// Check if the user is logged in
+if (!isset($_SESSION['user_id'])) {
+    die("Error: User is not logged in.");
+}
+
+$user_id = $_SESSION['user_id']; // Get the user ID from session
 
 // Get POST data and validate inputs
 $jurusan = htmlspecialchars(trim($_POST['jurusan'] ?? ''));
-$user_id = (int) ($_POST['user_id'] ?? 0);
-
-// Validate essential inputs
-if (empty($jurusan) || empty($user_id)) {
-    die("Error: Input tidak valid.");
+if (empty($jurusan)) {
+    die("Error: Jurusan tidak valid.");
 }
 
 // Fetch user data from the database
@@ -21,12 +26,12 @@ if ($result->num_rows > 0) {
 }
 
 // Get the user's answers from the form
-$total_questions = 7;  // Asumsi jumlah pertanyaan untuk setiap jurusan adalah 7
-$correct_answers = 0;  // Untuk menghitung jawaban "Ya"
+$total_questions = 7;  // Assume there are 7 questions for each major
+$correct_answers = 0;  // To count "Yes" answers
 
-// Menghitung jawaban "Ya"
+// Count "Yes" answers
 foreach ($_POST as $key => $value) {
-    if (strpos($key, 'answer_') === 0) {  // Mengambil hanya jawaban
+    if (strpos($key, 'answer_') === 0) {  // Check if the key starts with 'answer_'
         if ($value == 'ya') {
             $correct_answers++;
         }
@@ -34,33 +39,40 @@ foreach ($_POST as $key => $value) {
 }
 
 if ($correct_answers === 0) {
-    // If no answers are selected, show a message
+    // If no answers are selected, show an error message
     die("Error: Tidak ada jawaban yang dipilih.");
 }
 
-// Tentukan ambang batas (threshold) sebagai setengah dari jumlah pertanyaan
-$threshold = ceil($total_questions / 2);  // Ambang batas setengah jumlah pertanyaan
+// Set the threshold to half of the total questions
+$threshold = ceil($total_questions / 2);  // Half of the total questions
 
-// Tentukan apakah jurusan cocok atau tidak
+// Determine if the major is suitable or not
 $is_suitable = $correct_answers >= $threshold;
 
-// Prepare the result message
-if ($is_suitable) {
-    $resultMessage = "Selamat! Berdasarkan jawaban kamu, jurusan ini <span class='suitable'>COCOK</span> untuk kamu.<br>
-                      Kamu sangat cocok dengan jurusan yang kamu pilih!<br><br>
-                      <strong>Nama:</strong> " . htmlspecialchars($user_data['nama']) . "<br>
-                      <strong>Umur:</strong> " . htmlspecialchars($user_data['umur']) . "<br>
-                      <strong>Asal Sekolah:</strong> " . htmlspecialchars($user_data['asal_sekolah']) . "<br><br>
-                      Semangat untuk langkah selanjutnya!<br>
-                      Apakah kamu ingin mencoba jurusan lain?";
+// Insert the test result into the test_history table
+$query_insert = "INSERT INTO test_history (user_id, major, suitable, date) 
+                 VALUES ($user_id, '$jurusan', " . ($is_suitable ? 1 : 0) . ", NOW())";
+if ($conn->query($query_insert) === TRUE) {
+    // Set the result message based on suitability
+    if ($is_suitable) {
+        $resultMessage = "Selamat! Berdasarkan jawaban kamu, jurusan ini <span class='suitable'>COCOK</span> untuk kamu.<br>
+                          Kamu sangat cocok dengan jurusan yang kamu pilih!<br><br>
+                          <strong>Nama:</strong> " . htmlspecialchars($user_data['nama']) . "<br>
+                          <strong>Umur:</strong> " . htmlspecialchars($user_data['umur']) . "<br>
+                          <strong>Asal Sekolah:</strong> " . htmlspecialchars($user_data['asal_sekolah']) . "<br><br>
+                          Semangat untuk langkah selanjutnya!<br>
+                          Apakah kamu ingin mencoba jurusan lain?";
+    } else {
+        $resultMessage = "Sayangnya, jawaban kamu menunjukkan bahwa jurusan ini <span class='not-suitable'>TIDAK COCOK</span> untuk kamu.<br>
+                          Silakan coba jurusan lain yang lebih sesuai!<br><br>
+                          <strong>Nama:</strong> " . htmlspecialchars($user_data['nama']) . "<br>
+                          <strong>Umur:</strong> " . htmlspecialchars($user_data['umur']) . "<br>
+                          <strong>Asal Sekolah:</strong> " . htmlspecialchars($user_data['asal_sekolah']) . "<br><br>
+                          Mungkin jurusan ini bukan yang terbaik untuk kamu, coba pertimbangkan pilihan lain.<br>
+                          Coba cari jurusan yang lebih sesuai dengan minat dan keahlian kamu.";
+    }
 } else {
-    $resultMessage = "Sayangnya, jawaban kamu menunjukkan bahwa jurusan ini <span class='not-suitable'>TIDAK COCOK</span> untuk kamu.<br>
-                      Silakan coba jurusan lain yang lebih sesuai!<br><br>
-                      <strong>Nama:</strong> " . htmlspecialchars($user_data['nama']) . "<br>
-                      <strong>Umur:</strong> " . htmlspecialchars($user_data['umur']) . "<br>
-                      <strong>Asal Sekolah:</strong> " . htmlspecialchars($user_data['asal_sekolah']) . "<br><br>
-                      Mungkin jurusan ini bukan yang terbaik untuk kamu, coba pertimbangkan pilihan lain.<br>
-                      Coba cari jurusan yang lebih sesuai dengan minat dan keahlian kamu.";
+    $resultMessage = "Terjadi kesalahan saat menyimpan hasil tes.";
 }
 ?>
 
@@ -107,7 +119,8 @@ if ($is_suitable) {
         <h2>Hasil Rekomendasi Jurusan</h2>
         <p id="resultMessage"><?= $resultMessage ?></p>
         <h3 id="resultJurusan" class="font-weight-bold"><?= htmlspecialchars($jurusan) ?></h3>
-        <a href="index.php" class="btn btn-custom mt-4">Kembali ke Beranda</a>
+        <a href="index.php" class="btn btn-custom mt-4">Akhiri</a>
+        <a href="profile.php" class="btn btn-custom mt-4">Lihat Riwayat</a>
         <button class="btn btn-custom mt-4 ml-3" data-toggle="modal" data-target="#jurusanModal">Lihat Semua Jurusan</button>
     </div>
 
