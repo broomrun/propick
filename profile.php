@@ -23,8 +23,13 @@ if ($result_user->num_rows > 0) {
     die("Error: User data not found.");
 }
 
-// Fetch the user's test history from the test_history table
-$query_history = "SELECT * FROM test_history WHERE user_id = $user_id ORDER BY date DESC";
+// Fetch the most recent test history for each major
+$query_history = "
+    SELECT * FROM test_history 
+    WHERE user_id = $user_id
+    AND date IN (SELECT MAX(date) FROM test_history WHERE user_id = $user_id GROUP BY major)
+    ORDER BY date DESC
+";
 $result_history = $conn->query($query_history);
 
 // Prepare the history display message
