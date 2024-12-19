@@ -54,23 +54,30 @@ $query_insert = "INSERT INTO test_history (user_id, major, suitable, date)
                  VALUES ($user_id, '$jurusan', " . ($is_suitable ? 1 : 0) . ", NOW())";
 if ($conn->query($query_insert) === TRUE) {
     // Set the result message based on suitability
-    if ($is_suitable) {
-        $resultMessage = "Selamat! Berdasarkan jawaban kamu, jurusan ini <span class='suitable'>COCOK</span> untuk kamu.<br>
-                          Kamu sangat cocok dengan jurusan yang kamu pilih!<br><br>
-                          <strong>Nama:</strong> " . htmlspecialchars($user_data['nama']) . "<br>
-                          <strong>Umur:</strong> " . htmlspecialchars($user_data['umur']) . "<br>
-                          <strong>Asal Sekolah:</strong> " . htmlspecialchars($user_data['asal_sekolah']) . "<br><br>
-                          Semangat untuk langkah selanjutnya!<br>
-                          Apakah kamu ingin mencoba jurusan lain?";
-    } else {
-        $resultMessage = "Sayangnya, jawaban kamu menunjukkan bahwa jurusan ini <span class='not-suitable'>TIDAK COCOK</span> untuk kamu.<br>
-                          Silakan coba jurusan lain yang lebih sesuai!<br><br>
-                          <strong>Nama:</strong> " . htmlspecialchars($user_data['nama']) . "<br>
-                          <strong>Umur:</strong> " . htmlspecialchars($user_data['umur']) . "<br>
-                          <strong>Asal Sekolah:</strong> " . htmlspecialchars($user_data['asal_sekolah']) . "<br><br>
-                          Mungkin jurusan ini bukan yang terbaik untuk kamu, coba pertimbangkan pilihan lain.<br>
-                          Coba cari jurusan yang lebih sesuai dengan minat dan keahlian kamu.";
-    }
+// Set the result message based on suitability
+if ($is_suitable) {
+    $resultMessage = "Selamat! Berdasarkan jawaban kamu, jurusan ini <span class='suitable'><strong>COCOK</strong></span> untuk kamu.<br>
+                      <strong>Kamu sangat cocok dengan jurusan yang kamu pilih!</strong><br>
+                      <div class='divider'></div>
+                      <strong>Nama:</strong> " . htmlspecialchars($user_data['nama']) . "<br>
+                      <strong>Umur:</strong> " . htmlspecialchars($user_data['umur']) . "<br>
+                      <strong>Asal Sekolah:</strong> " . htmlspecialchars($user_data['asal_sekolah']) . "<br>
+                      <div class='divider'></div>
+                      Semangat untuk langkah selanjutnya!<br>
+                      <div class='divider'></div>
+                      Apakah kamu ingin mencoba jurusan lain?";
+} else {
+    $resultMessage = "Sayangnya, jawaban kamu menunjukkan bahwa jurusan ini <span class='not-suitable'><strong>TIDAK COCOK</strong></span> untuk kamu.<br>
+                      <strong>Silakan coba jurusan lain yang lebih sesuai!</strong><br>
+                      <div class='divider'></div>
+                      <strong>Nama:</strong> " . htmlspecialchars($user_data['nama']) . "<br>
+                      <strong>Umur:</strong> " . htmlspecialchars($user_data['umur']) . "<br>
+                      <strong>Asal Sekolah:</strong> " . htmlspecialchars($user_data['asal_sekolah']) . "<br>
+                      <div class='divider'></div>
+                      Mungkin jurusan ini bukan yang terbaik untuk kamu, coba pertimbangkan pilihan lain.<br>
+                      <div class='divider'></div>
+                      Coba cari jurusan yang lebih sesuai dengan minat dan keahlian kamu.";
+}
 } else {
     $resultMessage = "Terjadi kesalahan saat menyimpan hasil tes.";
 }
@@ -102,10 +109,16 @@ if ($conn->query($query_insert) === TRUE) {
             color: #FFFFFF;
             border: none;
         }
+        .divider {
+            border-top: 2px solid #B17457;
+            margin: 20px 0;
+        }
+
         .btn-custom:hover { background-color: #8F5B40; }
         .bold { font-weight: bold; }
         .not-suitable { color: red; }
         .suitable { color: green; font-weight: bold; }
+
     </style>
 </head>
 <body>
@@ -116,7 +129,8 @@ if ($conn->query($query_insert) === TRUE) {
 
     <!-- Result Section -->
     <div class="container result-container">
-        <h2>Hasil Rekomendasi Jurusan</h2>
+        <h2>Hasil Tes</h2>
+        <div class='divider'></div>
         <p id="resultMessage"><?= $resultMessage ?></p>
         <h3 id="resultJurusan" class="font-weight-bold"><?= htmlspecialchars($jurusan) ?></h3>
         <a href="index.php" class="btn btn-custom mt-4">Akhiri</a>
