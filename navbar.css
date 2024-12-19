@@ -1,0 +1,66 @@
+/* Styling untuk Navbar di seluruh halaman */
+.navbar {
+    background-color: #B17457;
+    padding: 10px 20px; /* Padding kecil untuk navbar */
+}
+
+.navbar .navbar-brand {
+    font-size: 20px; /* Ukuran font sesuai */
+    font-weight: bold;
+    color: white; /* Warna teks navbar-brand */
+}
+
+.navbar .navbar-nav .nav-link {
+    color: white; /* Warna teks untuk link navbar */
+    padding: 10px 15px;
+    font-size: 16px;
+    font-weight: 500;
+}
+
+.navbar .navbar-nav .nav-link:hover {
+    background-color: #8F5B40; /* Warna saat hover */
+    border-radius: 5px;
+}
+
+.navbar .ml-auto {
+    margin-left: auto;
+}
+
+.navbar .btn-custom {
+    background-color: #B17457;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    margin: 0 5px; /* margin sedikit lebih kecil agar tombol lebih rapat */
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px; /* Ukuran font konsisten */
+    font-weight: 500;
+    height: 40px; /* Pastikan tinggi tombol konsisten */
+}
+
+.navbar .btn-custom:hover {
+    background-color: #8F5B40;
+}
+
+/* Styling untuk logo dalam navbar */
+.navbar .navbar-brand img {
+    height: 30px; /* Sesuaikan ukuran logo jika ada */
+    margin-right: 10px;
+}
+
+/* Responsif - navbar akan menyesuaikan pada layar kecil */
+@media (max-width: 768px) {
+    .navbar {
+        padding: 10px 10px;
+    }
+
+    .navbar .navbar-nav .nav-link {
+        padding: 5px 10px;
+    }
+
+    .navbar .btn-custom {
+        font-size: 14px;
+        padding: 8px 16px;
+    }
+}

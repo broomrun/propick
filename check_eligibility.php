@@ -54,23 +54,30 @@ $query_insert = "INSERT INTO test_history (user_id, major, suitable, date)
                  VALUES ($user_id, '$jurusan', " . ($is_suitable ? 1 : 0) . ", NOW())";
 if ($conn->query($query_insert) === TRUE) {
     // Set the result message based on suitability
-    if ($is_suitable) {
-        $resultMessage = "Selamat! Berdasarkan jawaban kamu, jurusan ini <span class='suitable'>COCOK</span> untuk kamu.<br>
-                          Kamu sangat cocok dengan jurusan yang kamu pilih!<br><br>
-                          <strong>Nama:</strong> " . htmlspecialchars($user_data['nama']) . "<br>
-                          <strong>Umur:</strong> " . htmlspecialchars($user_data['umur']) . "<br>
-                          <strong>Asal Sekolah:</strong> " . htmlspecialchars($user_data['asal_sekolah']) . "<br><br>
-                          Semangat untuk langkah selanjutnya!<br>
-                          Apakah kamu ingin mencoba jurusan lain?";
-    } else {
-        $resultMessage = "Sayangnya, jawaban kamu menunjukkan bahwa jurusan ini <span class='not-suitable'>TIDAK COCOK</span> untuk kamu.<br>
-                          Silakan coba jurusan lain yang lebih sesuai!<br><br>
-                          <strong>Nama:</strong> " . htmlspecialchars($user_data['nama']) . "<br>
-                          <strong>Umur:</strong> " . htmlspecialchars($user_data['umur']) . "<br>
-                          <strong>Asal Sekolah:</strong> " . htmlspecialchars($user_data['asal_sekolah']) . "<br><br>
-                          Mungkin jurusan ini bukan yang terbaik untuk kamu, coba pertimbangkan pilihan lain.<br>
-                          Coba cari jurusan yang lebih sesuai dengan minat dan keahlian kamu.";
-    }
+// Set the result message based on suitability
+if ($is_suitable) {
+    $resultMessage = "Selamat! Berdasarkan jawaban kamu, jurusan ini <span class='suitable'><strong>COCOK</strong></span> untuk kamu.<br>
+                      <strong>Kamu sangat cocok dengan jurusan yang kamu pilih!</strong><br>
+                      <div class='divider'></div>
+                      <strong>Nama:</strong> " . htmlspecialchars($user_data['nama']) . "<br>
+                      <strong>Umur:</strong> " . htmlspecialchars($user_data['umur']) . "<br>
+                      <strong>Asal Sekolah:</strong> " . htmlspecialchars($user_data['asal_sekolah']) . "<br>
+                      <div class='divider'></div>
+                      Semangat untuk langkah selanjutnya!<br>
+                      <div class='divider'></div>
+                      Apakah kamu ingin mencoba jurusan lain?";
+} else {
+    $resultMessage = "Sayangnya, jawaban kamu menunjukkan bahwa jurusan ini <span class='not-suitable'><strong>TIDAK COCOK</strong></span> untuk kamu.<br>
+                      <strong>Silakan coba jurusan lain yang lebih sesuai!</strong><br>
+                      <div class='divider'></div>
+                      <strong>Nama:</strong> " . htmlspecialchars($user_data['nama']) . "<br>
+                      <strong>Umur:</strong> " . htmlspecialchars($user_data['umur']) . "<br>
+                      <strong>Asal Sekolah:</strong> " . htmlspecialchars($user_data['asal_sekolah']) . "<br>
+                      <div class='divider'></div>
+                      Mungkin jurusan ini bukan yang terbaik untuk kamu, coba pertimbangkan pilihan lain.<br>
+                      <div class='divider'></div>
+                      Coba cari jurusan yang lebih sesuai dengan minat dan keahlian kamu.";
+}
 } else {
     $resultMessage = "Terjadi kesalahan saat menyimpan hasil tes.";
 }
@@ -81,50 +88,173 @@ if ($conn->query($query_insert) === TRUE) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ProdiPicker - Hasil</title>
+    <title>Propick</title>
+    <link rel="stylesheet" href="navbar.css">
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.4.4/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <style>
-        body { background-color: #FAF7F0; color: #000000; }
-        .navbar { background-color: #B17457; }
+        body {
+            background-color: #FAF7F0;
+            color: #333333;
+            font-family: 'Poppins', sans-serif;
+            line-height: 1.6;
+        }
+
         .result-container {
             text-align: center;
             margin: 3rem auto;
-            padding: 2rem;
-            background-color: #D8D2C2;
-            border-radius: 10px;
-            max-width: 600px;
+            padding: 2.5rem;
+            background-color: #ffffff;
+            border-radius: 15px;
+            max-width: 700px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
         }
+
         .btn-custom {
             background-color: #B17457;
             color: #FFFFFF;
             border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            margin: 0.5rem;
         }
-        .btn-custom:hover { background-color: #8F5B40; }
-        .bold { font-weight: bold; }
-        .not-suitable { color: red; }
-        .suitable { color: green; font-weight: bold; }
+
+        .btn-custom:hover {
+            background-color: #8F5B40;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(177, 116, 87, 0.2);
+        }
+
+        .divider {
+            border-top: 2px solid #D8D2C2;
+            margin: 1.5rem 0;
+            width: 100%;
+        }
+
+        .bold {
+            font-weight: 600;
+        }
+
+        .not-suitable {
+            color: #dc3545;
+            font-weight: 600;
+            padding: 0.25rem 0.75rem;
+            border-radius: 4px;
+            background-color: rgba(220, 53, 69, 0.1);
+            display: inline-block;
+        }
+
+        .suitable {
+            color: #28a745;
+            font-weight: 600;
+            padding: 0.25rem 0.75rem;
+            border-radius: 4px;
+            background-color: rgba(40, 167, 69, 0.1);
+            display: inline-block;
+        }
+
+        h2 {
+            color: #B17457;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+        }
+
+        h3 {
+            color: #333333;
+            margin: 1rem 0;
+        }
+
+        .modal-content {
+            border-radius: 15px;
+            border: none;
+        }
+
+        .modal-header {
+            background-color: #B17457;
+            color: white;
+            border-radius: 15px 15px 0 0;
+        }
+
+        .modal-title {
+            font-weight: 600;
+        }
+
+        .table {
+            margin-bottom: 0;
+        }
+
+        .table thead th {
+            background-color: #D8D2C2;
+            border-bottom: none;
+            color: #333333;
+        }
+
+        .table td, .table th {
+            padding: 1rem;
+            vertical-align: middle;
+        }
+
+        .close {
+            color: white;
+        }
+
+        .close:hover {
+            color: #FAF7F0;
+        }
+
+        .user-info {
+            background-color: #D8D2C2;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin: 1.5rem 0;
+            text-align: left;
+        }
+
+        .user-info strong {
+            color: #B17457;
+        }
+
+        @media (max-width: 768px) {
+            .result-container {
+                margin: 2rem 1rem;
+                padding: 1.5rem;
+            }
+            
+            .btn-custom {
+                display: block;
+                width: 100%;
+                margin: 0.5rem 0;
+            }
+        }
     </style>
 </head>
 <body>
-    <!-- Navbar -->
+    
     <nav class="navbar navbar-expand-lg navbar-dark">
-        <a class="navbar-brand" href="#">ProdiPicker</a>
+        <a class="navbar-brand" href="index.php">Propick</a>
+        <div class="ml-auto">
+            <a href="index.php" class="btn btn-custom btn-sm">Beranda</a>
+            <a href="profile.php" class="btn btn-custom btn-sm">Profil</a>
+        </div>
     </nav>
 
-    <!-- Result Section -->
     <div class="container result-container">
-        <h2>Hasil Rekomendasi Jurusan</h2>
+        <h2>Hasil Tes</h2>
+        <div class='divider'></div>
         <p id="resultMessage"><?= $resultMessage ?></p>
         <h3 id="resultJurusan" class="font-weight-bold"><?= htmlspecialchars($jurusan) ?></h3>
-        <a href="index.php" class="btn btn-custom mt-4">Akhiri</a>
-        <a href="profile.php" class="btn btn-custom mt-4">Lihat Riwayat</a>
-        <button class="btn btn-custom mt-4 ml-3" data-toggle="modal" data-target="#jurusanModal">Lihat Semua Jurusan</button>
+        <div class="d-flex flex-wrap justify-content-center">
+            <a href="index.php" class="btn btn-custom">Akhiri</a>
+            <a href="profile.php" class="btn btn-custom">Lihat Riwayat</a>
+            <button class="btn btn-custom" data-toggle="modal" data-target="#jurusanModal">Lihat Semua Jurusan</button>
+        </div>
     </div>
 
-    <!-- Modal -->
     <div class="modal fade" id="jurusanModal" tabindex="-1" role="dialog" aria-labelledby="jurusanModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">

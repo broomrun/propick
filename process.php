@@ -43,85 +43,192 @@ $questions_array = $questions->fetch_all(MYSQLI_ASSOC);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pertanyaan untuk Jurusan <?= htmlspecialchars($jurusan) ?></title>
+    <title>Propick</title>
+    <link rel="stylesheet" href="navbar.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        body {
-            background-color: #FAF7F0;
-            color: #000000;
-        }
-        .navbar {
-            background-color: #B17457;
-        }
-        .quiz-container {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-        }
+    /* Global Styles */
+    body {
+        background-color: #FAF7F0;
+        color: #000000;
+        font-family: 'Poppins', sans-serif;
+        line-height: 1.6;
+        min-height: 100vh;
+    }
+    /* Quiz Container */
+    .quiz-container {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: calc(100vh - 70px);
+        padding: 2rem 1rem;
+    }
+
+    .quiz-box {
+        background-color: #D8D2C2;
+        padding: 2.5rem;
+        border-radius: 16px;
+        text-align: center;
+        width: 100%;
+        max-width: 600px;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Question Styling */
+    .question-box {
+        background-color: white;
+        padding: 2rem;
+        border-radius: 12px;
+        margin-bottom: 2rem;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        transition: transform 0.2s ease;
+    }
+
+    .question-box:hover {
+        transform: translateY(-2px);
+    }
+
+    .question-box h4 {
+        font-size: 1.25rem;
+        font-weight: 600;
+        margin-bottom: 1.5rem;
+        color: #333;
+        line-height: 1.4;
+    }
+
+    /* Button Styling */
+    .btn-custom {
+        background-color: #B17457;
+        color: #FFFFFF;
+        border: none;
+        padding: 0.75rem 1.5rem;
+        font-size: 1rem;
+        font-weight: 500;
+        border-radius: 8px;
+        transition: all 0.2s ease;
+    }
+
+    .btn-custom:hover {
+        background-color: #8F5B40;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(177, 116, 87, 0.2);
+    }
+
+    .btn-custom:active {
+        transform: translateY(0);
+    }
+
+    .btn-block {
+        margin-bottom: 1rem;
+        width: 100%;
+    }
+
+    .btn-block:last-child {
+        margin-bottom: 0;
+    }
+
+    /* Navigation Buttons */
+    .d-flex {
+        margin-top: 2rem;
+        gap: 1rem;
+    }
+
+    #prevButton, #nextButton {
+        padding: 0.75rem 2rem;
+        border-radius: 8px;
+        font-weight: 500;
+        transition: all 0.2s ease;
+    }
+
+    #prevButton {
+        background-color: #D8D2C2;
+        border: 1px solid #B17457;
+        color: #B17457;
+    }
+
+    #prevButton:hover {
+        background-color: #ccc6b6;
+    }
+
+    #nextButton {
+        background-color: #B17457;
+    }
+
+    #nextButton:hover {
+        background-color: #8F5B40;
+    }
+
+    /* Submit Button */
+    #submitBtn {
+        margin-top: 2rem;
+        padding: 1rem;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        background-color: #B17457;
+        border-radius: 8px;
+    }
+
+    #submitBtn:disabled {
+        background-color: #D8D2C2;
+        cursor: not-allowed;
+        opacity: 0.7;
+    }
+
+    /* Major Box Styling */
+    .question-box h3 {
+        font-size: 1.75rem;
+        font-weight: 700;
+        color: #B17457;
+        margin-bottom: 0;
+    }
+
+    /* Responsive Adjustments */
+    @media (max-width: 768px) {
         .quiz-box {
-            background-color: #D8D2C2;
-            padding: 2rem;
-            border-radius: 10px;
-            text-align: center;
-            width: 100%;
-            max-width: 500px;
+            padding: 1.5rem;
         }
+        
         .question-box {
-            background-color: white;
-            padding: 1rem;
-            border-radius: 10px;
-            margin-bottom: 1.5rem;
-            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 1.5rem;
         }
-        .btn-custom {
-            background-color: #B17457;
-            color: #FFFFFF;
-            border: none;
+        
+        .question-box h4 {
+            font-size: 1.1rem;
         }
-        .btn-custom:hover {
-            background-color: #8F5B40;
-        }
-        .btn-block {
-            margin-bottom: 10px;
-        }
-        .question-box button:disabled {
-            background-color: #D8D2C2;
-            cursor: not-allowed;
-        }
+    }
     </style>
 </head>
 <body>
 
-<!-- Navbar -->
 <nav class="navbar navbar-expand-lg navbar-dark">
-    <a class="navbar-brand" href="#">ProdiPicker</a>
-</nav>
+        <a class="navbar-brand" href="index.php">Propick</a>
+        <div class="ml-auto">
+            <a href="index.php" class="btn btn-custom btn-sm">Beranda</a>
+            <a href="profile.php" class="btn btn-custom btn-sm">Profil</a>
+        </div>
+    </nav>
 
-<!-- Quiz Section -->
 <div class="quiz-container">
     <div class="quiz-box">
-        <!-- Major Box -->
         <div class="question-box">
             <h3>Jurusan yang Dipilih: <?= htmlspecialchars($jurusan) ?></h3>
         </div>
 
-        <!-- Questions -->
         <form id="quizForm" action="check_eligibility.php" method="POST">
             <input type="hidden" name="jurusan" value="<?= htmlspecialchars($jurusan) ?>">
             <input type="hidden" name="user_id" value="<?= $user_id ?>">
 
             <?php foreach ($questions_array as $index => $question): ?>
-                <div class="form-group question-box" id="question-<?= $index ?>" style="display: <?= $index == 0 ? 'block' : 'none' ?>;">
+                <div class="form-group question-box" id="question-<?= $index ?>" style="display: <?= $index === 0 ? 'block' : 'none' ?>;">
                     <h4><?= htmlspecialchars($question['pertanyaan']) ?></h4>
                     <button type="button" class="btn btn-custom btn-block" onclick="answerQuestion('ya', <?= $index ?>)">Ya</button>
                     <button type="button" class="btn btn-custom btn-block" onclick="answerQuestion('tidak', <?= $index ?>)">Tidak</button>
                 </div>
-                <!-- Hidden answer field for each question -->
                 <input type="hidden" name="answer_<?= $question['id'] ?>" id="answer_<?= $index ?>">
             <?php endforeach; ?>
 
-            <div class="d-flex justify-content-between">
+            <div class="d-flex justify-content-between btn-navigation">
                 <button type="button" id="prevButton" class="btn btn-secondary" onclick="prevQuestion()" style="display: none;">Previous</button>
                 <button type="button" id="nextButton" class="btn btn-primary" onclick="nextQuestion()">Next</button>
             </div>
@@ -136,52 +243,36 @@ $questions_array = $questions->fetch_all(MYSQLI_ASSOC);
     const totalQuestions = <?= count($questions_array) ?>;
 
     function answerQuestion(answer, index) {
-        // Save the answer for this question in the hidden input field
-        document.getElementById(`answer_${index}`).value = answer;
-
-        // Show next question
+        document.getElementById(answer_${index}).value = answer;
         nextQuestion();
     }
 
     function nextQuestion() {
         if (currentQuestionIndex < totalQuestions - 1) {
-            // Hide current question
-            document.getElementById(`question-${currentQuestionIndex}`).style.display = 'none';
-
-            // Show next question
+            document.getElementById(question-${currentQuestionIndex}).style.display = 'none';
             currentQuestionIndex++;
-            document.getElementById(`question-${currentQuestionIndex}`).style.display = 'block';
-
-            // Show/Hide buttons
+            document.getElementById(question-${currentQuestionIndex}).style.display = 'block';
             toggleButtons();
         } else {
-            // Enable submit button only when all questions are answered
             document.getElementById('submitBtn').disabled = false;
         }
     }
 
     function prevQuestion() {
         if (currentQuestionIndex > 0) {
-            // Hide current question
-            document.getElementById(`question-${currentQuestionIndex}`).style.display = 'none';
-
-            // Show previous question
+            document.getElementById(question-${currentQuestionIndex}).style.display = 'none';
             currentQuestionIndex--;
-            document.getElementById(`question-${currentQuestionIndex}`).style.display = 'block';
-
-            // Show/Hide buttons
+            document.getElementById(question-${currentQuestionIndex}).style.display = 'block';
             toggleButtons();
         }
     }
 
     function toggleButtons() {
-        // Show/Hide previous and next buttons
         document.getElementById('prevButton').style.display = currentQuestionIndex > 0 ? 'inline-block' : 'none';
         document.getElementById('nextButton').style.display = currentQuestionIndex < totalQuestions - 1 ? 'inline-block' : 'none';
         document.getElementById('submitBtn').style.display = currentQuestionIndex === totalQuestions - 1 ? 'block' : 'none';
     }
 
-    // Initialize button visibility
     toggleButtons();
 </script>
 

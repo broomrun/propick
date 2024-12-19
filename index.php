@@ -96,15 +96,24 @@ $conn->close();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ProdiPicker</title>
+    <title>Propick</title>
+    <link rel="stylesheet" href="navbar.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <style>
         body {
             background-color: #FAF7F0;
             color: #000000;
+            font-family: 'Poppins', sans-serif;
         }
         .navbar {
-            background-color: #B17457;
+    background-color: #B17457;
+    padding: 10px 20px; /* Pastikan padding kecil */
+        }
+        .navbar-brand {
+            font-size: 20px; /* Ukuran font sesuai */
+            font-weight: bold;
         }
         .carousel-inner img {
             width: 100%;
@@ -176,17 +185,22 @@ $conn->close();
 <body>
 
 <!-- Navbar -->
-<nav class="navbar navbar-expand-lg navbar-dark">
-    <a class="navbar-brand" href="#">ProdiPicker</a>
-</nav>
+
+    <nav class="navbar navbar-expand-lg navbar-dark">
+            <a class="navbar-brand" href="index.php">Propick</a>
+            <div class="ml-auto">
+                <a href="index.php" class="btn btn-custom btn-sm">Beranda</a>
+                <a href="profile.php" class="btn btn-custom btn-sm">Profil</a>
+            </div>
+    </nav>
 
 <!-- Carousel -->
 <div id="carouselExample" class="carousel slide" data-ride="carousel">
     <div class="carousel-inner">
         <div class="carousel-item active">
-            <img src="assets/image1.jpg" alt="Slide 1">
+            <img src="assets/iimage1.jpg" alt="Slide 1">
             <div class="carousel-caption d-none d-md-block">
-                <h5>Selamat Datang di ProdiPicker</h5>
+                <h5>Selamat Datang di Propick</h5>
                 <p>Temukan program studi yang cocok untukmu!</p>
             </div>
         </div>
@@ -206,24 +220,18 @@ $conn->close();
     </a>
 </div>
 
-<!-- University logos -->
-<div class="d-flex justify-content-center flex-wrap mt-4">
-    <img src="logo1.png" class="circle-logo" alt="Logo 1">
-    <img src="logo2.png" class="circle-logo" alt="Logo 2">
-    <img src="logo3.png" class="circle-logo" alt="Logo 3">
-</div>
-
-<!-- Buttons -->
 <div class="d-flex justify-content-center mt-4">
-    <button class="login-btn" data-toggle="modal" data-target="#loginModal">Daftar / Login</button>
-    <button class="start-btn" id="testButton" disabled>Mulai Tes</button>
+    <button class="login-btn" data-toggle="modal" data-target="#loginModal">Masuk / Daftar</button>
+    <button class="start-btn" id="testButton" <?php if (!isset($_SESSION['user_name'])) echo 'disabled'; ?>>Mulai Tes</button>
+    <button class="login-btn"><a href="logout.php" style="color: white; text-decoration: none;">Keluar</a></button>
 </div>
 
+<!-- Login Modal -->
 <div class="modal fade" id="loginModal" tabindex="-1" role="dialog" aria-labelledby="loginModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="loginModalLabel">Login</h5>
+                <h5 class="modal-title" id="loginModalLabel">Masuk</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -236,17 +244,17 @@ $conn->close();
                         <input type="email" class="form-control" id="loginEmail" name="email" required>
                     </div>
                     <div class="form-group">
-                        <label for="loginPassword">Password</label>
+                        <label for="loginPassword">Sandi</label>
                         <div class="input-group">
                             <input type="password" class="form-control" id="loginPassword" name="password" required>
                             <div class="input-group-append">
-                                <span class="input-group-text toggle-password" id="toggleLoginPassword">👁️</span>
+                                <span class="input-group-text toggle-password" id="toggleLoginPassword"><i class="fas fa-eye-slash"></i></span>
                             </div>
                         </div>
                     </div>
-                    <button type="submit" class="btn btn-custom btn-block">Login</button>
+                    <button type="submit" class="btn btn-custom btn-block">Masuk</button>
                 </form>
-                <p class="text-center mt-3">Belum punya akun? <a href="#" id="switchToSignup">Sign Up Sekarang</a></p>
+                <p class="text-center mt-3">Belum punya akun? <a href="#" id="switchToSignup">Daftar Sekarang</a></p>
             </div>
         </div>
     </div>
@@ -257,7 +265,7 @@ $conn->close();
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="signupModalLabel">Sign Up</h5>
+                <h5 class="modal-title" id="signupModalLabel">Daftar</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -265,10 +273,6 @@ $conn->close();
             <div class="modal-body">
                 <form method="POST" action="index.php" id="formSignup">
                     <input type="hidden" name="action" value="signup">
-                    <div class="form-group">
-                        <label for="signupEmail">Email</label>
-                        <input type="email" class="form-control" id="signupEmail" name="email" required>
-                    </div>
                     <div class="form-group">
                         <label for="signupNama">Nama Lengkap</label>
                         <input type="text" class="form-control" id="signupNama" name="nama" required>
@@ -286,72 +290,129 @@ $conn->close();
                         </select>
                     </div>
                     <div class="form-group">
-                        <label for="signupPassword">Password</label>
+                        <label for="signupEmail">Email</label>
+                        <input type="email" class="form-control" id="signupEmail" name="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="signupPassword">Sandi</label>
                         <div class="input-group">
                             <input type="password" class="form-control" id="signupPassword" name="password" required>
                             <div class="input-group-append">
-                                <span class="input-group-text toggle-password" id="toggleSignupPassword">👁️</span>
+                                <span class="input-group-text toggle-password" id="toggleSignupPassword"><i class="fas fa-eye-slash"></i></span>
                             </div>
                         </div>
                     </div>
                     <div class="form-group">
-                        <label for="confirmPassword">Konfirmasi Password</label>
+                        <label for="confirmPassword">Konfirmasi Sandi</label>
                         <div class="input-group">
                             <input type="password" class="form-control" id="confirmPassword" name="confirm_password" required>
                             <div class="input-group-append">
-                                <span class="input-group-text toggle-password" id="toggleConfirmPassword">👁️</span>
+                                <span class="input-group-text toggle-password" id="toggleConfirmPassword"><i class="fas fa-eye-slash"></i></span>
                             </div>
                         </div>
                     </div>
-                    <button type="submit" class="btn btn-custom btn-block">Sign Up</button>
+                    <button type="submit" class="btn btn-custom btn-block">Daftar</button>
                 </form>
-                <p class="text-center mt-3">Sudah punya akun? <a href="#" id="switchToLogin">Login Sekarang</a></p>
+                <p class="text-center mt-3">Sudah punya akun? <a href="#" id="switchToLogin">Masuk Sekarang</a></p>
             </div>
         </div>
     </div>
 </div>
 
 <!-- User Info Modal -->
-<div class="modal fade" id="userInfoModal" tabindex="-1" role="dialog">
+<div class="modal fade" id="userInfoModal" tabindex="-1" role="dialog" aria-labelledby="userInfoModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Masukkan Data Diri</h5>
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h5 class="modal-title" id="userInfoModalLabel">Masukkan Data Diri</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
             </div>
             <div class="modal-body">
                 <form id="userInfoForm" action="process.php" method="POST">
-                    <input type="text" name="nama" placeholder="Nama Lengkap" value="<?= $userData['nama'] ?? '' ?>" readonly>
-                    <input type="text" name="umur" placeholder="Umur" value="<?= isset($_SESSION['umur']) ? $_SESSION['umur'] : '' ?>" readonly>
-                    <input type="text" name="asal_sekolah" placeholder="Asal Sekolah" value="<?= isset($_SESSION['asal_sekolah']) ? $_SESSION['asal_sekolah'] : '' ?>" readonly>
-                    <select name="jurusan" required>
-                        <?php while ($major = $majors->fetch_assoc()): ?>
-                            <option value="<?= htmlspecialchars($major['nama_jurusan']) ?>">
-                                <?= htmlspecialchars($major['nama_jurusan']) ?>
-                            </option>
-                        <?php endwhile; ?>
-                    </select>
-                    <button type="submit" class="start-btn">Mulai Quiz</button>
+                    <div class="form-group">
+                        <label for="userName">Nama Lengkap</label>
+                        <input type="text" class="form-control" name="nama" id="userName" placeholder="Nama Lengkap" value="<?= $userData['nama'] ?? '' ?>" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="userAge">Umur</label>
+                        <input type="text" class="form-control" name="umur" id="userAge" placeholder="Umur" value="<?= isset($_SESSION['umur']) ? $_SESSION['umur'] : '' ?>" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="userSchool">Asal Sekolah</label>
+                        <input type="text" class="form-control" name="asal_sekolah" id="userSchool" placeholder="Asal Sekolah" value="<?= isset($_SESSION['asal_sekolah']) ? $_SESSION['asal_sekolah'] : '' ?>" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="majorSelect">Pilih Jurusan</label>
+                        <select class="form-control" name="jurusan" id="majorSelect" required>
+                            <?php while ($major = $majors->fetch_assoc()): ?>
+                                <option value="<?= htmlspecialchars($major['nama_jurusan']) ?>">
+                                    <?= htmlspecialchars($major['nama_jurusan']) ?>
+                                </option>
+                            <?php endwhile; ?>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-custom btn-block">Mulai Kuis</button>
                 </form>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Scripts -->
+<!-- University logos -->
+<div class="d-flex justify-content-center flex-wrap mt-4">
+    <img src="assets/logo1.png" class="circle-logo" alt="Logo 1">
+    <img src="assets/logo2.png" class="circle-logo" alt="Logo 2">
+    <img src="assets/logo3.png" class="circle-logo" alt="Logo 3">
+    <img src="assets/logo4.png" class="circle-logo" alt="Logo 4">
+    <img src="assets/logo5.png" class="circle-logo" alt="Logo 5">
+    <img src="assets/logo6.png" class="circle-logo" alt="Logo 6">
+    <img src="assets/logo7.png" class="circle-logo" alt="Logo 7">
+    <img src="assets/logo9.png" class="circle-logo" alt="Logo 8">
+    <img src="assets/logo10.png" class="circle-logo" alt="Logo 9">
+    <img src="assets/logo11.png" class="circle-logo" alt="Logo 10">
+    <img src="assets/logo12.png" class="circle-logo" alt="Logo 11">
+    <img src="assets/logo13.png" class="circle-logo" alt="Logo 12">
+    <img src="assets/logo14.png" class="circle-logo" alt="Logo 13">
+    <img src="assets/logo15.png" class="circle-logo" alt="Logo 14">
+    <img src="assets/logo16.png" class="circle-logo" alt="Logo 15">
+    <img src="assets/logo17.png" class="circle-logo" alt="Logo 16">
+    <img src="assets/logo18.png" class="circle-logo" alt="Logo 17">
+    <img src="assets/logo19.png" class="circle-logo" alt="Logo 18">
+    <img src="assets/logo20.png" class="circle-logo" alt="Logo 19">
+    <img src="assets/logo8.png" class="circle-logo" alt="Logo 20">
+    <img src="assets/logo21.png" class="circle-logo" alt="Logo 19">
+    <img src="assets/logo22.png" class="circle-logo" alt="Logo 19">
+    <img src="assets/logo23.png" class="circle-logo" alt="Logo 19">
+    <img src="assets/logo24.png" class="circle-logo" alt="Logo 19">
+    <img src="assets/logo25.png" class="circle-logo" alt="Logo 19">
+</div>
+
 <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 <script>
 $(document).ready(function() {
-    // Handle Start Test button
+    // Assuming a boolean variable $isLoggedIn in PHP indicating the login status
+    var isLoggedIn = <?= json_encode($isLoggedIn) ?>;
+    
+    // If user is logged in, enable the "Mulai Tes" button
+    if (isLoggedIn) {
+        $('#testButton').prop('disabled', false);
+    }
+
+    // Handle Start Test button click
     $('#testButton').click(function(e) {
         e.preventDefault();
-        if (!<?= json_encode($isLoggedIn) ?>) { // Pastikan menggunakan boolean PHP
+        
+        // Check if user is logged in
+        if (!isLoggedIn) { // If not logged in, show the login modal
             alert('Anda harus login atau sign up terlebih dahulu!');
-            $('#loginModal').modal('show');
+            $('#loginModal').modal('show');  // Show the login modal if not logged in
             return;
         }
-        // If logged in, proceed with the test
+        
+        // If logged in, proceed with the test and show the user info modal
         $('#userInfoModal').modal('show');
     });
 
@@ -374,47 +435,30 @@ $(document).ready(function() {
 
     // Toggle password visibility
     $('.toggle-password').click(function() {
-        const input = $(this).closest('.input-group').find('input');
-        const type = input.attr('type') === 'password' ? 'text' : 'password';
-        input.attr('type', type);
-        $(this).text(type === 'password' ? '👁️' : '🙈');
+        var inputField = $(this).closest('.input-group').find('input');
+        var icon = $(this).find('i');
+        if (inputField.attr('type') === 'password') {
+            inputField.attr('type', 'text');
+            icon.removeClass('fa-eye-slash').addClass('fa-eye');
+        } else {
+            inputField.attr('type', 'password');
+            icon.removeClass('fa-eye').addClass('fa-eye-slash');
+        }
     });
 
-    // Form validations for signup
-    $('#formSignup').submit(function(e) {
+    // Form validation for the signup modal
+    $('#signupForm').submit(function(e) {
         e.preventDefault();
-        const password = $('#signupPassword').val();
-        const confirmPassword = $('#confirmPassword').val();
-        const umur = parseInt($('#signupUmur').val());
-
-        if (password !== confirmPassword) {
-            alert('Password dan konfirmasi password tidak cocok!');
-            return;
+        var age = $('#signupUmur').val();
+        if (age < 15 || age > 21) {
+            alert('Usia anda tidak sesuai untuk jenjang SMA.');
+        } else {
+            // Proceed with form submission (handle sign up logic)
+            $(this).unbind().submit();
         }
-
-        if (umur < 15 || umur > 21) {
-            alert('Umur harus antara 15-21 tahun!');
-            return;
-        }
-
-        // If validation passes, submit the form
-        this.submit();
-    });
-
-    // Form validations for login
-    $('#formLogin').submit(function(e) {
-        e.preventDefault();
-
-        // Add any login validation if needed
-
-        // Submit the form
-        this.submit();
     });
 });
-
 </script>
 
 </body>
 </html>
-
-
