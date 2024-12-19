@@ -214,10 +214,10 @@ $conn->close();
     <img src="logo3.png" class="circle-logo" alt="Logo 3">
 </div>
 
-<!-- Buttons -->
 <div class="d-flex justify-content-center mt-4">
-    <button class="login-btn" data-toggle="modal" data-target="#loginModal">Daftar / Login</button>
-    <button class="start-btn" id="testButton" disabled>Mulai Tes</button>
+    <button class="login-btn" data-toggle="modal" data-target="#loginModal"> Sign Up / Login</button>
+    <button class="start-btn" id="testButton" <?php if (!isset($_SESSION['user_name'])) echo 'disabled'; ?>>Mulai Tes</button>
+    <button class="login-btn"><a href="logout.php" style="color: white; text-decoration: none;">Logout</a></button>
 </div>
 
 <!-- Login Modal -->
@@ -369,12 +369,15 @@ $(document).ready(function() {
     // Handle Start Test button click
     $('#testButton').click(function(e) {
         e.preventDefault();
-        if (!isLoggedIn) { // Ensure the user is logged in before proceeding
+        
+        // Check if user is logged in
+        if (!isLoggedIn) { // If not logged in, show the login modal
             alert('Anda harus login atau sign up terlebih dahulu!');
-            $('#loginModal').modal('show');
+            $('#loginModal').modal('show');  // Show the login modal if not logged in
             return;
         }
-        // If logged in, proceed with the test and show user info modal
+        
+        // If logged in, proceed with the test and show the user info modal
         $('#userInfoModal').modal('show');
     });
 

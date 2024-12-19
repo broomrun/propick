@@ -46,49 +46,169 @@ $questions_array = $questions->fetch_all(MYSQLI_ASSOC);
     <title>Pertanyaan untuk Jurusan <?= htmlspecialchars($jurusan) ?></title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        body {
-            background-color: #FAF7F0;
-            color: #000000;
-        }
-        .navbar {
-            background-color: #B17457;
-        }
-        .quiz-container {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-        }
+    /* Global Styles */
+    body {
+        background-color: #FAF7F0;
+        color: #000000;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        line-height: 1.6;
+        min-height: 100vh;
+    }
+
+    /* Navbar Styling */
+    .navbar {
+        background-color: #B17457;
+        padding: 1rem 2rem;
+        box-shadow: 0 2px 4px rgba(177, 116, 87, 0.1);
+    }
+
+    .navbar-brand {
+        font-size: 1.5rem;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+    }
+
+    /* Quiz Container */
+    .quiz-container {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: calc(100vh - 70px);
+        padding: 2rem 1rem;
+    }
+
+    .quiz-box {
+        background-color: #D8D2C2;
+        padding: 2.5rem;
+        border-radius: 16px;
+        text-align: center;
+        width: 100%;
+        max-width: 600px;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Question Styling */
+    .question-box {
+        background-color: white;
+        padding: 2rem;
+        border-radius: 12px;
+        margin-bottom: 2rem;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        transition: transform 0.2s ease;
+    }
+
+    .question-box:hover {
+        transform: translateY(-2px);
+    }
+
+    .question-box h4 {
+        font-size: 1.25rem;
+        font-weight: 600;
+        margin-bottom: 1.5rem;
+        color: #333;
+        line-height: 1.4;
+    }
+
+    /* Button Styling */
+    .btn-custom {
+        background-color: #B17457;
+        color: #FFFFFF;
+        border: none;
+        padding: 0.75rem 1.5rem;
+        font-size: 1rem;
+        font-weight: 500;
+        border-radius: 8px;
+        transition: all 0.2s ease;
+    }
+
+    .btn-custom:hover {
+        background-color: #8F5B40;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(177, 116, 87, 0.2);
+    }
+
+    .btn-custom:active {
+        transform: translateY(0);
+    }
+
+    .btn-block {
+        margin-bottom: 1rem;
+        width: 100%;
+    }
+
+    .btn-block:last-child {
+        margin-bottom: 0;
+    }
+
+    /* Navigation Buttons */
+    .d-flex {
+        margin-top: 2rem;
+        gap: 1rem;
+    }
+
+    #prevButton, #nextButton {
+        padding: 0.75rem 2rem;
+        border-radius: 8px;
+        font-weight: 500;
+        transition: all 0.2s ease;
+    }
+
+    #prevButton {
+        background-color: #D8D2C2;
+        border: 1px solid #B17457;
+        color: #B17457;
+    }
+
+    #prevButton:hover {
+        background-color: #ccc6b6;
+    }
+
+    #nextButton {
+        background-color: #B17457;
+    }
+
+    #nextButton:hover {
+        background-color: #8F5B40;
+    }
+
+    /* Submit Button */
+    #submitBtn {
+        margin-top: 2rem;
+        padding: 1rem;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        background-color: #B17457;
+        border-radius: 8px;
+    }
+
+    #submitBtn:disabled {
+        background-color: #D8D2C2;
+        cursor: not-allowed;
+        opacity: 0.7;
+    }
+
+    /* Major Box Styling */
+    .question-box h3 {
+        font-size: 1.75rem;
+        font-weight: 700;
+        color: #B17457;
+        margin-bottom: 0;
+    }
+
+    /* Responsive Adjustments */
+    @media (max-width: 768px) {
         .quiz-box {
-            background-color: #D8D2C2;
-            padding: 2rem;
-            border-radius: 10px;
-            text-align: center;
-            width: 100%;
-            max-width: 500px;
+            padding: 1.5rem;
         }
+        
         .question-box {
-            background-color: white;
-            padding: 1rem;
-            border-radius: 10px;
-            margin-bottom: 1.5rem;
-            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 1.5rem;
         }
-        .btn-custom {
-            background-color: #B17457;
-            color: #FFFFFF;
-            border: none;
+        
+        .question-box h4 {
+            font-size: 1.1rem;
         }
-        .btn-custom:hover {
-            background-color: #8F5B40;
-        }
-        .btn-block {
-            margin-bottom: 10px;
-        }
-        .question-box button:disabled {
-            background-color: #D8D2C2;
-            cursor: not-allowed;
-        }
+    }
     </style>
 </head>
 <body>
