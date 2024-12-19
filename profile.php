@@ -1,30 +1,35 @@
 <?php
+// Start the session to access session variables
 session_start();
-include 'config.php';
 
-// Check if user is logged in
+// Check if the user is logged in by verifying the session variable
 if (!isset($_SESSION['user_id'])) {
-    die("Error: User is not logged in.");
+    die("Error: You must be logged in to view your profile.");
 }
 
-$user_id = $_SESSION['user_id'];
+// Include the configuration file
+include 'config.php';
+
+// Get the current user's ID from the session
+$user_id = (int) $_SESSION['user_id'];  // Assumes user_id is stored in session
 
 // Fetch user data from the database
-$query = "SELECT * FROM users WHERE id = $user_id";
-$result = $conn->query($query);
+$query_user = "SELECT * FROM users WHERE id = $user_id";
+$result_user = $conn->query($query_user);
 
-if ($result->num_rows > 0) {
-    $user_data = $result->fetch_assoc();
+if ($result_user->num_rows > 0) {
+    $user_data = $result_user->fetch_assoc();
 } else {
     die("Error: User data not found.");
 }
 
-// Fetch the user's test history from the database
+// Fetch the user's test history from the test_history table
 $query_history = "SELECT * FROM test_history WHERE user_id = $user_id ORDER BY date DESC";
 $result_history = $conn->query($query_history);
 
+// Prepare the history display message
+$test_history = [];
 if ($result_history->num_rows > 0) {
-    $test_history = [];
     while ($row = $result_history->fetch_assoc()) {
         $test_history[] = [
             'major' => htmlspecialchars($row['major']),
@@ -35,6 +40,7 @@ if ($result_history->num_rows > 0) {
 } else {
     $test_history = null;
 }
+
 ?>
 
 <!DOCTYPE html>
@@ -42,7 +48,7 @@ if ($result_history->num_rows > 0) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Profil Pengguna</title>
+    <title>Profil - ProdiPicker</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.4.4/dist/umd/popper.min.js"></script>
@@ -50,12 +56,13 @@ if ($result_history->num_rows > 0) {
     <style>
         body { background-color: #FAF7F0; color: #000000; }
         .navbar { background-color: #B17457; }
-        .test-history-table { margin-top: 2rem; }
+        .profile-container { text-align: center; margin: 3rem auto; padding: 2rem; background-color: #D8D2C2; border-radius: 10px; max-width: 800px; }
         .btn-custom { background-color: #B17457; color: #FFFFFF; border: none; }
         .btn-custom:hover { background-color: #8F5B40; }
         .bold { font-weight: bold; }
-        .not-suitable { color: red; }
+        .test-history-table { margin-top: 2rem; }
         .suitable { color: green; font-weight: bold; }
+        .not-suitable { color: red; }
     </style>
 </head>
 <body>
@@ -65,21 +72,14 @@ if ($result_history->num_rows > 0) {
     </nav>
 
     <!-- Profile Section -->
-    <div class="container">
-        <h2 class="my-4">Profil Pengguna</h2>
-        <div class="card">
-            <div class="card-header">
-                <strong>Informasi Pengguna</strong>
-            </div>
-            <div class="card-body">
-                <p><strong>Nama:</strong> <?= htmlspecialchars($user_data['nama']) ?></p>
-                <p><strong>Umur:</strong> <?= htmlspecialchars($user_data['umur']) ?></p>
-                <p><strong>Asal Sekolah:</strong> <?= htmlspecialchars($user_data['asal_sekolah']) ?></p>
-            </div>
-        </div>
+    <div class="container profile-container">
+        <h2>Profil Pengguna</h2>
+        <p><strong>Nama:</strong> <?= htmlspecialchars($user_data['nama']) ?></p>
+        <p><strong>Umur:</strong> <?= htmlspecialchars($user_data['umur']) ?></p>
+        <p><strong>Asal Sekolah:</strong> <?= htmlspecialchars($user_data['asal_sekolah']) ?></p>
 
         <!-- Test History Section -->
-        <h3 class="my-4">Riwayat Tes Jurusan</h3>
+        <h3>Riwayat Tes Jurusan</h3>
         <?php if ($test_history): ?>
             <table class="table table-striped test-history-table">
                 <thead>
@@ -103,10 +103,7 @@ if ($result_history->num_rows > 0) {
             <p>Belum ada riwayat tes.</p>
         <?php endif; ?>
 
-        <!-- Profile Links -->
-        <div class="mt-4">
-            <a href="index.php" class="btn btn-custom">Kembali ke Beranda</a>
-        </div>
+        <a href="index.php" class="btn btn-custom mt-4">Kembali ke Beranda</a>
     </div>
 </body>
 </html>
