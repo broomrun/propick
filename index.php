@@ -98,6 +98,7 @@ $conn->close();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ProdiPicker</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <style>
         body {
             background-color: #FAF7F0;
@@ -219,6 +220,7 @@ $conn->close();
     <button class="start-btn" id="testButton" disabled>Mulai Tes</button>
 </div>
 
+<!-- Login Modal -->
 <div class="modal fade" id="loginModal" tabindex="-1" role="dialog" aria-labelledby="loginModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -240,7 +242,7 @@ $conn->close();
                         <div class="input-group">
                             <input type="password" class="form-control" id="loginPassword" name="password" required>
                             <div class="input-group-append">
-                                <span class="input-group-text toggle-password" id="toggleLoginPassword">👁️</span>
+                                <span class="input-group-text toggle-password" id="toggleLoginPassword"><i class="fas fa-eye-slash"></i></span>
                             </div>
                         </div>
                     </div>
@@ -266,10 +268,6 @@ $conn->close();
                 <form method="POST" action="index.php" id="formSignup">
                     <input type="hidden" name="action" value="signup">
                     <div class="form-group">
-                        <label for="signupEmail">Email</label>
-                        <input type="email" class="form-control" id="signupEmail" name="email" required>
-                    </div>
-                    <div class="form-group">
                         <label for="signupNama">Nama Lengkap</label>
                         <input type="text" class="form-control" id="signupNama" name="nama" required>
                     </div>
@@ -286,11 +284,15 @@ $conn->close();
                         </select>
                     </div>
                     <div class="form-group">
+                        <label for="signupEmail">Email</label>
+                        <input type="email" class="form-control" id="signupEmail" name="email" required>
+                    </div>
+                    <div class="form-group">
                         <label for="signupPassword">Password</label>
                         <div class="input-group">
                             <input type="password" class="form-control" id="signupPassword" name="password" required>
                             <div class="input-group-append">
-                                <span class="input-group-text toggle-password" id="toggleSignupPassword">👁️</span>
+                                <span class="input-group-text toggle-password" id="toggleSignupPassword"><i class="fas fa-eye-slash"></i></span>
                             </div>
                         </div>
                     </div>
@@ -299,7 +301,7 @@ $conn->close();
                         <div class="input-group">
                             <input type="password" class="form-control" id="confirmPassword" name="confirm_password" required>
                             <div class="input-group-append">
-                                <span class="input-group-text toggle-password" id="toggleConfirmPassword">👁️</span>
+                                <span class="input-group-text toggle-password" id="toggleConfirmPassword"><i class="fas fa-eye-slash"></i></span>
                             </div>
                         </div>
                     </div>
@@ -312,46 +314,67 @@ $conn->close();
 </div>
 
 <!-- User Info Modal -->
-<div class="modal fade" id="userInfoModal" tabindex="-1" role="dialog">
+<div class="modal fade" id="userInfoModal" tabindex="-1" role="dialog" aria-labelledby="userInfoModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Masukkan Data Diri</h5>
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h5 class="modal-title" id="userInfoModalLabel">Masukkan Data Diri</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
             </div>
             <div class="modal-body">
                 <form id="userInfoForm" action="process.php" method="POST">
-                    <input type="text" name="nama" placeholder="Nama Lengkap" value="<?= $userData['nama'] ?? '' ?>" readonly>
-                    <input type="text" name="umur" placeholder="Umur" value="<?= isset($_SESSION['umur']) ? $_SESSION['umur'] : '' ?>" readonly>
-                    <input type="text" name="asal_sekolah" placeholder="Asal Sekolah" value="<?= isset($_SESSION['asal_sekolah']) ? $_SESSION['asal_sekolah'] : '' ?>" readonly>
-                    <select name="jurusan" required>
-                        <?php while ($major = $majors->fetch_assoc()): ?>
-                            <option value="<?= htmlspecialchars($major['nama_jurusan']) ?>">
-                                <?= htmlspecialchars($major['nama_jurusan']) ?>
-                            </option>
-                        <?php endwhile; ?>
-                    </select>
-                    <button type="submit" class="start-btn">Mulai Quiz</button>
+                    <div class="form-group">
+                        <label for="userName">Nama Lengkap</label>
+                        <input type="text" class="form-control" name="nama" id="userName" placeholder="Nama Lengkap" value="<?= $userData['nama'] ?? '' ?>" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="userAge">Umur</label>
+                        <input type="text" class="form-control" name="umur" id="userAge" placeholder="Umur" value="<?= isset($_SESSION['umur']) ? $_SESSION['umur'] : '' ?>" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="userSchool">Asal Sekolah</label>
+                        <input type="text" class="form-control" name="asal_sekolah" id="userSchool" placeholder="Asal Sekolah" value="<?= isset($_SESSION['asal_sekolah']) ? $_SESSION['asal_sekolah'] : '' ?>" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="majorSelect">Pilih Jurusan</label>
+                        <select class="form-control" name="jurusan" id="majorSelect" required>
+                            <?php while ($major = $majors->fetch_assoc()): ?>
+                                <option value="<?= htmlspecialchars($major['nama_jurusan']) ?>">
+                                    <?= htmlspecialchars($major['nama_jurusan']) ?>
+                                </option>
+                            <?php endwhile; ?>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-custom btn-block">Mulai Quiz</button>
                 </form>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Scripts -->
 <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 <script>
 $(document).ready(function() {
-    // Handle Start Test button
+    // Assuming a boolean variable $isLoggedIn in PHP indicating the login status
+    var isLoggedIn = <?= json_encode($isLoggedIn) ?>;
+    
+    // If user is logged in, enable the "Mulai Tes" button
+    if (isLoggedIn) {
+        $('#testButton').prop('disabled', false);
+    }
+
+    // Handle Start Test button click
     $('#testButton').click(function(e) {
         e.preventDefault();
-        if (!<?= json_encode($isLoggedIn) ?>) { // Pastikan menggunakan boolean PHP
+        if (!isLoggedIn) { // Ensure the user is logged in before proceeding
             alert('Anda harus login atau sign up terlebih dahulu!');
             $('#loginModal').modal('show');
             return;
         }
-        // If logged in, proceed with the test
+        // If logged in, proceed with the test and show user info modal
         $('#userInfoModal').modal('show');
     });
 
@@ -374,47 +397,33 @@ $(document).ready(function() {
 
     // Toggle password visibility
     $('.toggle-password').click(function() {
-        const input = $(this).closest('.input-group').find('input');
-        const type = input.attr('type') === 'password' ? 'text' : 'password';
-        input.attr('type', type);
-        $(this).text(type === 'password' ? '👁️' : '🙈');
+        var inputField = $(this).closest('.input-group').find('input');
+        var icon = $(this).find('i');
+        if (inputField.attr('type') === 'password') {
+            inputField.attr('type', 'text');
+            icon.removeClass('fa-eye-slash').addClass('fa-eye');
+        } else {
+            inputField.attr('type', 'password');
+            icon.removeClass('fa-eye').addClass('fa-eye-slash');
+        }
     });
 
-    // Form validations for signup
-    $('#formSignup').submit(function(e) {
+    // Form validation for the signup modal
+    $('#signupForm').submit(function(e) {
         e.preventDefault();
-        const password = $('#signupPassword').val();
-        const confirmPassword = $('#confirmPassword').val();
-        const umur = parseInt($('#signupUmur').val());
-
-        if (password !== confirmPassword) {
-            alert('Password dan konfirmasi password tidak cocok!');
-            return;
+        var age = $('#signupUmur').val();
+        if (age < 15 || age > 21) {
+            alert('Usia anda tidak sesuai untuk jenjang SMA.');
+        } else {
+            // Proceed with form submission (handle sign up logic)
+            $(this).unbind().submit();
         }
-
-        if (umur < 15 || umur > 21) {
-            alert('Umur harus antara 15-21 tahun!');
-            return;
-        }
-
-        // If validation passes, submit the form
-        this.submit();
-    });
-
-    // Form validations for login
-    $('#formLogin').submit(function(e) {
-        e.preventDefault();
-
-        // Add any login validation if needed
-
-        // Submit the form
-        this.submit();
     });
 });
-
 </script>
 
 </body>
 </html>
+
 
 
